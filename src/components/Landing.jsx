@@ -17,11 +17,12 @@ export default function Landing() {
           >
             Explore Artists
           </Link>
-          <button
-            className="border-2 border-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-600 transition-colors transition-transform transform hover:scale-105"
+          <Link
+            to="/investor-dashboard"
+            className="border-2 border-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-600 transition-colors transition-transform transform hover:scale-105 flex items-center justify-center"
           >
-            Your Portfolio
-          </button>
+            Investor Dashboard
+          </Link>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 const dummyArtists = [
   {
@@ -104,9 +104,9 @@ export default function ExploreArtists() {
   }
 
   return (
-    <section className="p-8 min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-indigo-100">
+    <section className="p-8 min-h-screen bg-gradient-to-br from-purple-700 via-pink-600 to-red-500 font-sans">
       <h2
-        className={`text-4xl font-extrabold text-center mb-8 text-indigo-900 drop-shadow-lg transform transition-opacity duration-700 ${
+        className={`text-5xl font-extrabold text-center mb-10 text-white drop-shadow-lg transform transition-opacity duration-700 ${
           mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
         }`}
       >
@@ -122,10 +122,10 @@ export default function ExploreArtists() {
           <button
             key={letter}
             onClick={() => setAlphaFilter(letter === alphaFilter ? '' : letter)}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 transform ${
+            className={`px-5 py-2 rounded-lg font-semibold text-lg transition-colors duration-300 transform ${
               alphaFilter === letter
-                ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 text-white shadow-lg scale-105'
-                : 'bg-gray-300 text-gray-800 hover:bg-gradient-to-r hover:from-purple-400 hover:via-pink-400 hover:to-indigo-400 hover:scale-105'
+                ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white shadow-lg scale-105'
+                : 'bg-white text-purple-800 hover:bg-gradient-to-r hover:from-purple-400 hover:via-pink-400 hover:to-red-400 hover:text-white hover:scale-105 shadow-md'
             }`}
           >
             {letter}
@@ -141,12 +141,12 @@ export default function ExploreArtists() {
         <input
           type="text"
           placeholder="Search by name..."
-          className="border border-indigo-300 px-5 py-3 rounded-lg w-full md:w-2/3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+          className="border border-pink-400 px-5 py-3 rounded-lg w-full md:w-2/3 focus:outline-none focus:ring-4 focus:ring-pink-500 transition text-purple-900 font-semibold"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <select
-          className="border border-indigo-300 px-5 py-3 rounded-lg w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+          className="border border-pink-400 px-5 py-3 rounded-lg w-full md:w-1/3 focus:outline-none focus:ring-4 focus:ring-pink-500 transition text-purple-900 font-semibold"
           value={genreFilter}
           onChange={(e) => setGenreFilter(e.target.value)}
         >
@@ -171,16 +171,16 @@ export default function ExploreArtists() {
         {filtered.map((artist) => (
           <div
             key={artist.id}
-            className="bg-white border border-indigo-200 rounded-2xl shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-2 duration-300 flex flex-col p-6 opacity-0 animate-slideUp"
-            style={{ animationFillMode: 'forwards', animationDuration: '500ms', animationDelay: `${100 * artist.id}ms` }}
+            className="bg-white border border-pink-300 rounded-3xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-3 duration-300 flex flex-col p-6 opacity-0 animate-slideUp"
+            style={{ animationFillMode: 'forwards', animationDuration: '600ms', animationDelay: `${100 * artist.id}ms` }}
           >
-            <div className="flex flex-col space-y-4 flex-grow">
+            <div className="flex flex-col space-y-5 flex-grow">
               <button
                 onClick={() => togglePlay(artist)}
-                className={`px-5 py-2 rounded-lg font-semibold transition-colors duration-300 transform hover:scale-105 ${
+                className={`px-6 py-3 rounded-xl font-semibold text-lg transition-colors duration-300 transform hover:scale-105 ${
                   playingId === artist.id
-                    ? 'bg-purple-700 text-white shadow-inner'
-                    : 'bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 text-white hover:brightness-110'
+                    ? 'bg-gradient-to-r from-pink-700 via-red-600 to-red-700 text-white shadow-inner'
+                    : 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white hover:brightness-110'
                 }`}
               >
                 {playingId === artist.id ? 'Pause Snippet' : 'Play Spotify Snippet'}
@@ -188,23 +188,21 @@ export default function ExploreArtists() {
 
               <button
                 onClick={() => navigate('/checkout', { state: { artist } })}
-                className="px-5 py-2 rounded-lg font-semibold bg-green-500 hover:bg-green-600 text-white transition-colors duration-300 animate-pulse hover:animate-none"
+                className="px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-green-500 to-green-600 text-white hover:brightness-110 transition-colors duration-300 animate-pulse hover:animate-none"
               >
                 Invest Now
               </button>
 
-              <a
-                href={artist.spotify}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-indigo-900 font-bold text-xl hover:underline"
+              <Link
+                to={`/artist/${artist.id}`}
+                className="text-purple-900 font-extrabold text-2xl hover:underline drop-shadow-md"
               >
                 {artist.name}
-              </a>
+              </Link>
 
-              <p className="text-indigo-700 italic font-medium">Genres: {artist.genre.join(', ')}</p>
+              <p className="text-pink-700 italic font-semibold tracking-wide">Genres: {artist.genre.join(', ')}</p>
 
-              <p className="text-green-700 font-semibold">Investing Price: {artist.price}</p>
+              <p className="text-green-700 font-bold text-lg">Investing Price: {artist.price}</p>
             </div>
           </div>
         ))}
