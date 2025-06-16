@@ -1,8 +1,10 @@
-// vite.config.js
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'        // add React plugin
+import tailwindcss from '@tailwindcss/vite'    // add Tailwind plugin
 
 export default defineConfig({
-  base: '/Spotavibes.github.io/', // 🔁 Replace with your repo name
-  plugins: [react()],
-});
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+})
