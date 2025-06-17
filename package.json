@@ -4,9 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "dev": "vite",
     "build": "vite build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist -b main"
+    "deploy": "gh-pages -d dist -b main",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.10",
