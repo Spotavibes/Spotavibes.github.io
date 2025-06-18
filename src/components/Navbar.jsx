@@ -1,8 +1,15 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { supabase } from '../lib/supabaseClient'
+import AuthButton from './AuthButton'
 
-export default function Navbar() {
+export default function Navbar({ user }) {
   const [isOpen, setIsOpen] = useState(false)
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    setIsOpen(false)
+  }
 
   return (
     <nav className="bg-gray-900 text-white p-4 shadow-md">
@@ -60,14 +67,21 @@ export default function Navbar() {
           >
             About
           </Link>
-          <button
-            className="block bg-purple-600 px-4 py-1 rounded m-4 md:m-0 hover:bg-purple-700 transition-colors"
-            onClick={() => setIsOpen(false)}
-          >
-            Login
-          </button>
+          {user ? (
+            <div className="flex items-center space-x-4 md:ml-6 px-4 py-2">
+              <span className="select-none">👋 {user.email}</span>
+              <button
+                onClick={handleSignOut}
+                className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <div className="px-4 py-2 md:ml-6">
+              <AuthButton />
+            </div>
+          )}
         </div>
       </div>
-    </nav>
-  )
-}
+    </nav>)}
