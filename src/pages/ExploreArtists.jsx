@@ -6,9 +6,15 @@ const dummyArtists = [
     id: 1,
     name: 'Luna Waves',
     genre: ['Pop', 'Indie'],
-    price: '$25.00',
+    price: '25',
     spotify: 'https://open.spotify.com/artist/12345',
     snippet: '/audio/mysnippet.mp3',
+    banner: '/images/luna-waves.jpg',
+    bio: 'Luna Waves blends dreamy indie pop melodies with soulful vocals to create a celestial soundscape.',
+    socials: {
+      twitter: 'https://twitter.com/lunawaves',
+      instagram: 'https://instagram.com/lunawaves',
+    },
   },
   {
     id: 2,
@@ -17,6 +23,12 @@ const dummyArtists = [
     price: '$30.00',
     spotify: 'https://open.spotify.com/artist/23456',
     snippet: '/audio/mysnippet.mp3',
+    banner: '/images/echo-pulse.jpg',
+    bio: 'Echo Pulse brings hard-hitting beats and thought-provoking lyrics to the modern hip-hop scene.',
+    socials: {
+      twitter: 'https://twitter.com/echopulse',
+      instagram: 'https://instagram.com/echopulse',
+    },
   },
   {
     id: 3,
@@ -25,6 +37,12 @@ const dummyArtists = [
     price: '$20.00',
     spotify: 'https://open.spotify.com/artist/34567',
     snippet: '/audio/mysnippet.mp3',
+    banner: '/images/nova-sky.jpg',
+    bio: 'Nova Sky fuses vintage rock vibes with indie flair, delivering high-energy performances and catchy hooks.',
+    socials: {
+      twitter: 'https://twitter.com/novasky',
+      instagram: 'https://instagram.com/novasky',
+    },
   },
   {
     id: 4,
@@ -33,6 +51,12 @@ const dummyArtists = [
     price: '$28.00',
     spotify: 'https://open.spotify.com/artist/45678',
     snippet: '/audio/mysnippet.mp3',
+    banner: '/images/violet-drift.jpg',
+    bio: 'Violet Drift captivates audiences with smooth pop vocals and emotionally rich lyrics.',
+    socials: {
+      twitter: 'https://twitter.com/violetdrift',
+      instagram: 'https://instagram.com/violetdrift',
+    },
   },
   {
     id: 5,
@@ -41,6 +65,12 @@ const dummyArtists = [
     price: '$35.00',
     spotify: 'https://open.spotify.com/artist/56789',
     snippet: '/audio/mysnippet.mp3',
+    banner: '/images/crimson-beat.jpg',
+    bio: 'Crimson Beat is known for their raw lyrical energy and trap-influenced beats.',
+    socials: {
+      twitter: 'https://twitter.com/crimsonbeat',
+      instagram: 'https://instagram.com/crimsonbeat',
+    },
   },
   {
     id: 6,
@@ -49,6 +79,12 @@ const dummyArtists = [
     price: '$22.00',
     spotify: 'https://open.spotify.com/artist/67890',
     snippet: '/audio/mysnippet.mp3',
+    banner: '/images/silver-lining.jpg',
+    bio: 'Silver Lining crafts introspective indie tracks with rich acoustic textures and mellow vibes.',
+    socials: {
+      twitter: 'https://twitter.com/silverlining',
+      instagram: 'https://instagram.com/silverlining',
+    },
   },
   {
     id: 7,
@@ -57,6 +93,12 @@ const dummyArtists = [
     price: '$27.00',
     spotify: 'https://open.spotify.com/artist/78901',
     snippet: '/audio/mysnippet.mp3',
+    banner: '/images/golden-hour.jpg',
+    bio: 'Golden Hour creates infectious dance-pop anthems perfect for sunset drives and beach parties.',
+    socials: {
+      twitter: 'https://twitter.com/goldenhour',
+      instagram: 'https://instagram.com/goldenhour',
+    },
   },
   {
     id: 8,
@@ -65,8 +107,15 @@ const dummyArtists = [
     price: '$25.00',
     spotify: 'https://open.spotify.com/artist/89012',
     snippet: '/audio/mysnippet.mp3',
+    banner: '/images/midnight-echo.jpg',
+    bio: 'Midnight Echo delivers gritty rock riffs with a modern edge, inspired by classic legends.',
+    socials: {
+      twitter: 'https://twitter.com/midnightecho',
+      instagram: 'https://instagram.com/midnightecho',
+    },
   },
 ]
+
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 

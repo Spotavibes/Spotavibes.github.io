@@ -3,13 +3,9 @@ import Stripe from 'stripe'
 import cors from 'cors'
 
 const app = express()
+const stripe = new Stripe('') // Replace with your actual secret key
 
-// Replace with your actual secret key
-const stripe = new Stripe('INSERT STRIPE KEY HERE') 
-
-app.use(cors({
-  origin: 'http://localhost:5173'  // frontend origin
-}))
+app.use(cors())
 app.use(express.json())
 
 app.post('/create-checkout-session', async (req, res) => {
@@ -23,11 +19,11 @@ app.post('/create-checkout-session', async (req, res) => {
         price_data: {
           currency: 'usd',
           product_data: { name: `Investment in Artist #${artistId}` },
-          unit_amount: amount * 100, // amount in cents
+          unit_amount: amount * 100, // Stripe amount is in cents
         },
         quantity: 1,
       }],
-      success_url: 'http://localhost:5173/success',
+      success_url: 'http://localhost:5173/success', // Change if your frontend URL differs
       cancel_url: 'http://localhost:5173/cancel',
       metadata: {
         artistId: artistId.toString(),
@@ -42,7 +38,6 @@ app.post('/create-checkout-session', async (req, res) => {
   }
 })
 
-// Fixed port, no dynamic port allocation
 const PORT = 3000
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`)
