@@ -15,7 +15,7 @@ export default function Checkout() {
 
   if (!artist) {
     return (
-      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 via-pink-50 to-indigo-100 transition-opacity duration-700" style={{opacity: fadeIn ? 1 : 0}}>
+      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 via-pink-50 to-indigo-100 transition-opacity duration-700" style={{ opacity: fadeIn ? 1 : 0 }}>
         <h2 className="text-3xl font-bold mb-6 text-indigo-900 drop-shadow-lg">No artist selected.</h2>
         <button
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105"
@@ -26,11 +26,33 @@ export default function Checkout() {
       </div>
     )
   }
+async function handlePayment() {
+  try {
+    const price = Number(artist.price.replace('$', ''));
 
-  function handlePayment() {
-    alert(`You invested in ${artist.name} for ${artist.price}!`)
-    navigate('/explore-artists')
+    const res = await fetch('http://localhost:3000/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        artistId: artist.id,
+        userId: 'demo-user-1', // Replace this with your actual user ID or context
+        amount: price,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.url) {
+      window.location.href = data.url; // Redirect to Stripe Checkout
+    } else {
+      console.error('Failed to get Stripe Checkout URL:', data);
+    }
+  } catch (error) {
+    console.error('Error creating Stripe Checkout session:', error);
   }
+}
 
   return (
     <motion.div
@@ -41,49 +63,27 @@ export default function Checkout() {
     >
       <h2 className="text-4xl font-extrabold mb-6 text-center text-indigo-900 drop-shadow-lg">Checkout</h2>
 
-      {/* Banner Image */}
-      <img
-        src={artist.banner}
-        alt={`${artist.name} banner`}
-        className="w-full h-48 object-cover rounded-xl mb-6 shadow-md"
-      />
+      <img src={artist.banner} alt={`${artist.name} banner`} className="w-full h-48 object-cover rounded-xl mb-6 shadow-md" />
 
       <div className="mb-8 space-y-4 text-indigo-800">
         <p className="text-xl"><strong>Artist:</strong> {artist.name}</p>
         <p className="text-lg"><strong>Price:</strong> <span className="text-green-600 font-semibold">{artist.price}</span></p>
         <p className="italic"><strong>Genres:</strong> {artist.genre.join(', ')}</p>
-        
-        {/* Bio */}
         <p className="text-sm text-indigo-700"><strong>About:</strong> {artist.bio}</p>
 
-        {/* Social Links */}
         <div className="flex gap-4 mt-2">
           {artist.socials?.twitter && (
-            <a
-              href={artist.socials.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline text-sm"
-            >
-              Twitter
-            </a>
+            <a href={artist.socials.twitter} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline text-sm">Twitter</a>
           )}
           {artist.socials?.instagram && (
-            <a
-              href={artist.socials.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-pink-500 hover:underline text-sm"
-            >
-              Instagram
-            </a>
+            <a href={artist.socials.instagram} target="_blank" rel="noopener noreferrer" className="text-pink-500 hover:underline text-sm">Instagram</a>
           )}
         </div>
       </div>
 
       <button
         onClick={handlePayment}
-        className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-4 rounded-xl font-semibold shadow-lg transition transform hover:scale-105 active:scale-95"
+        className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-xl font-semibold shadow-lg transition transform hover:scale-105 active:scale-95"
       >
         Confirm Investment
       </button>

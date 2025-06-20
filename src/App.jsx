@@ -12,24 +12,38 @@ import About from './pages/About'
 import ArtistProfile from './pages/ArtistProfile'
 import InvestorDashboard from './pages/InvestorDashboard'
 
+// ✅ ADD: Simple success and cancel components
+const Success = () => (
+  <div className="p-10 text-center">
+    <h1 className="text-3xl font-bold text-green-600">✅ Payment Successful</h1>
+    <p className="mt-2">Thank you for supporting the artist!</p>
+    <a href="/explore-artists" className="text-blue-600 underline mt-4 inline-block">Back to Explore</a>
+  </div>
+)
+
+const Cancel = () => (
+  <div className="p-10 text-center">
+    <h1 className="text-3xl font-bold text-red-600">❌ Payment Cancelled</h1>
+    <p className="mt-2">You can try again anytime.</p>
+    <a href="/explore-artists" className="text-blue-600 underline mt-4 inline-block">Back to Explore</a>
+  </div>
+)
+
 export default function App() {
   const location = useLocation()
   const [session, setSession] = useState(null)
 
   useEffect(() => {
-    // 1) Fetch the initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
     })
 
-    // 2) Listen for future changes
     const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession)
     })
 
-    // 3) Cleanup subscription on unmount
     return () => {
-      data.subscription.unsubscribe()  // correct way to unsubscribe :contentReference[oaicite:0]{index=0}
+      data.subscription.unsubscribe()
     }
   }, [])
 
@@ -51,6 +65,10 @@ export default function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/about" element={<About />} />
           <Route path="/artist/:id" element={<ArtistProfile />} />
+
+          {/* ✅ ADD THESE TWO ROUTES */}
+          <Route path="/success" element={<Success />} />
+          <Route path="/cancel" element={<Cancel />} />
 
           {/* Private */}
           <Route
