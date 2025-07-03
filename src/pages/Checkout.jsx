@@ -1,8 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { supabase } from '../lib/supabaseClient'
 
-export default function Checkout() {
+
+export default function Checkout({ user }) {
   const location = useLocation()
   const navigate = useNavigate()
   const [fadeIn, setFadeIn] = useState(false)
@@ -10,49 +12,55 @@ export default function Checkout() {
   const artist = location.state?.artist
 
   useEffect(() => {
+    console.log('Checkout component mounted');
     setFadeIn(true)
   }, [])
 
-  if (!artist) {
-    return (
-      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 via-pink-50 to-indigo-100 transition-opacity duration-700" style={{ opacity: fadeIn ? 1 : 0 }}>
-        <h2 className="text-3xl font-bold mb-6 text-indigo-900 drop-shadow-lg">No artist selected.</h2>
-        <button
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105"
-          onClick={() => navigate('/explore-artists')}
-        >
-          Go back to Explore Artists
-        </button>
-      </div>
-    )
-  }
-async function handlePayment() {
-  try {
-    const price = Number(artist.price.replace('$', ''));
-
-    const res = await fetch('http://localhost:3000/create-checkout-session', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        artistId: artist.id,
-        userId: 'demo-user-1', // Replace this with your actual user ID or context
-        amount: price,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (data.url) {
-      window.location.href = data.url; // Redirect to Stripe Checkout
-    } else {
-      console.error('Failed to get Stripe Checkout URL:', data);
+  async function handlePayment() {
+    console.log('handlePayment called');
+  
+    // 1) get the current session & token
+    const { data: { session }, error: sessErr } = await supabase.auth.getSession();
+    if (sessErr || !session) {
+      console.error('Unable to get session:', sessErr);
+      return;
     }
-  } catch (error) {
-    console.error('Error creating Stripe Checkout session:', error);
+  
+    const token = session.access_token;
+    const price = Number(artist.price.replace('$', ''));
+  
+    console.log('About to fetch /create-checkout-session', {
+      artistId: artist.id,
+      amount: price,
+      token: token.slice(0, 10) + '…'
+    });
+  
+    try {
+      const res = await fetch('http://localhost:3000/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // 2) send the JWT so your backend can verify it
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          artistId: artist.id,
+          amount: price,
+          // no more userId or userEmail here!
+        }),
+      });
+  
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('Failed to get Stripe Checkout URL:', data);
+      }
+    } catch (error) {
+      console.error('Error creating Stripe Checkout session:', error);
+    }
   }
-}
+  
 
   return (
     <motion.div
