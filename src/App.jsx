@@ -8,9 +8,9 @@ import Footer from './components/Footer'
 import Landing from './components/Landing'
 import ExploreArtists from './pages/ExploreArtists'
 import Checkout from './pages/Checkout'
-import About from './pages/About'
 import ArtistProfile from './pages/ArtistProfile'
 import InvestorDashboard from './pages/InvestorDashboard'
+import ArtistSubmission from './pages/ArtistSubmission'
 
 // ✅ ADD: Simple success and cancel components
 const Success = () => (
@@ -62,8 +62,8 @@ export default function App() {
           {/* Public */}
           <Route path="/" element={<Landing />} />
           <Route path="/explore-artists" element={<ExploreArtists />} />
+          <Route path="/artist-submission" element={<ArtistSubmission />} />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/about" element={<About />} />
           <Route path="/artist/:id" element={<ArtistProfile />} />
 
           {/* ✅ ADD THESE TWO ROUTES */}

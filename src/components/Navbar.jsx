@@ -61,11 +61,11 @@ export default function Navbar({ user }) {
             Artists
           </Link>
           <Link
-            to="/about"
+            to="/artist-submission"
             className="block px-4 py-2 hover:text-purple-400 md:ml-6 transition-colors"
             onClick={() => setIsOpen(false)}
           >
-            About
+            Card Submission
           </Link>
           {user ? (
             <div className="flex items-center space-x-4 md:ml-6 px-4 py-2">

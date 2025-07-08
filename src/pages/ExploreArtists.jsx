@@ -72,52 +72,8 @@ const dummyArtists = [
       instagram: 'https://instagram.com/crimsonbeat',
     },
   },
-  {
-    id: 6,
-    name: 'Silver Lining',
-    genre: ['Indie', 'Alternative'],
-    price: '$22.00',
-    spotify: 'https://open.spotify.com/artist/67890',
-    snippet: '/audio/mysnippet.mp3',
-    banner: '/images/silver-lining.jpg',
-    bio: 'Silver Lining crafts introspective indie tracks with rich acoustic textures and mellow vibes.',
-    socials: {
-      twitter: 'https://twitter.com/silverlining',
-      instagram: 'https://instagram.com/silverlining',
-    },
-  },
-  {
-    id: 7,
-    name: 'Golden Hour',
-    genre: ['Pop', 'Dance'],
-    price: '$27.00',
-    spotify: 'https://open.spotify.com/artist/78901',
-    snippet: '/audio/mysnippet.mp3',
-    banner: '/images/golden-hour.jpg',
-    bio: 'Golden Hour creates infectious dance-pop anthems perfect for sunset drives and beach parties.',
-    socials: {
-      twitter: 'https://twitter.com/goldenhour',
-      instagram: 'https://instagram.com/goldenhour',
-    },
-  },
-  {
-    id: 8,
-    name: 'Midnight Echo',
-    genre: ['Rock'],
-    price: '$25.00',
-    spotify: 'https://open.spotify.com/artist/89012',
-    snippet: '/audio/mysnippet.mp3',
-    banner: '/images/midnight-echo.jpg',
-    bio: 'Midnight Echo delivers gritty rock riffs with a modern edge, inspired by classic legends.',
-    socials: {
-      twitter: 'https://twitter.com/midnightecho',
-      instagram: 'https://instagram.com/midnightecho',
-    },
-  },
+
 ]
-
-
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
 export default function ExploreArtists() {
   const [search, setSearch] = useState('')
@@ -167,19 +123,7 @@ export default function ExploreArtists() {
           mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
         }`}
       >
-        {alphabet.map((letter) => (
-          <button
-            key={letter}
-            onClick={() => setAlphaFilter(letter === alphaFilter ? '' : letter)}
-            className={`px-5 py-2 rounded-lg font-semibold text-lg transition-colors duration-300 transform ${
-              alphaFilter === letter
-                ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white shadow-lg scale-105'
-                : 'bg-white text-purple-800 hover:bg-gradient-to-r hover:from-purple-400 hover:via-pink-400 hover:to-red-400 hover:text-white hover:scale-105 shadow-md'
-            }`}
-          >
-            {letter}
-          </button>
-        ))}
+        
       </div>
 
       <div
