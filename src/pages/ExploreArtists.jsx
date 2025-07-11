@@ -81,7 +81,7 @@ export default function ExploreArtists() {
       {loading ? (
         <div className="text-white text-center text-xl">Loading artists...</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
           {filtered.map((artist) => {
             const genres = Array.isArray(artist.genres) ? artist.genres : (artist.genres ? artist.genres.split(',') : []);
             const genreString = genres.map(g => g.trim()).join(', ');
@@ -89,29 +89,31 @@ export default function ExploreArtists() {
             return (
               <div
                 key={artist.user_id}
-                className="bg-white/40 backdrop-blur-md border border-pink-300 rounded-3xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-3 duration-300 flex flex-col p-8 opacity-0 animate-slideUp w-full max-w-xl mx-auto"
+                className="bg-white/40 backdrop-blur-md border border-pink-300 rounded-3xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-3 duration-300 flex flex-col p-6 opacity-0 animate-slideUp w-full"
                 style={{ animationFillMode: 'forwards', animationDuration: '600ms' }}
               >
-                <div className="flex flex-col space-y-6 flex-grow items-center w-full">
+                <div className="flex flex-col space-y-4 flex-grow items-center w-full">
                   {spotifyEmbedUrl && (
-                    <iframe
-                      src={spotifyEmbedUrl}
-                      width="100%"
-                      height="152"
-                      frameBorder="0"
-                      allow="encrypted-media"
-                      title="Spotify Player"
-                      className="rounded-lg mb-4"
-                      style={{ minWidth: '300px', maxWidth: '100%' }}
-                    ></iframe>
+                    <div className="w-full overflow-hidden rounded-lg mb-4">
+                      <iframe
+                        src={spotifyEmbedUrl}
+                        width="100%"
+                        height="180"
+                        frameBorder="0"
+                        allow="encrypted-media"
+                        title="Spotify Player"
+                        className="block w-full"
+                        style={{ maxWidth: '100%', boxSizing: 'border-box' }}
+                      ></iframe>
+                    </div>
                   )}
                   <button
                     onClick={() => navigate('/checkout', { state: { artist } })}
-                    className="px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-green-500 to-green-600 text-white hover:brightness-110 transition-colors duration-300 animate-pulse hover:animate-none w-full text-lg"
+                    className="px-8 py-3 rounded-xl font-semibold bg-gradient-to-r from-green-500 to-green-600 text-white hover:brightness-110 transition-colors duration-300 animate-pulse hover:animate-none w-full text-lg"
                   >
                     Invest Now
                   </button>
-                  <p className="text-pink-700 italic font-semibold tracking-wide text-lg mt-2 mb-2">
+                  <p className="text-pink-700 italic font-semibold tracking-wide text-lg mt-2 mb-0">
                     {genreString}
                   </p>
                 </div>
