@@ -41,7 +41,7 @@ export default function ExploreArtists() {
   }
 
   return (
-    <section className="p-8 min-h-screen bg-gradient-to-br from-purple-700 via-pink-600 to-red-500 font-sans">
+    <section className="p-8 min-h-screen bg-gradient-to-br from-black via-purple-900 to-black font-sans">
       <h2
         className={`text-5xl font-extrabold text-center mb-10 text-white drop-shadow-lg transform transition-opacity duration-700 ${
           mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
