@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabaseClient";
+import genresListRaw from '../assets/genres.txt?raw';
+import Select from 'react-select';
+
+const genresList = genresListRaw.split('\n').map(g => g.trim()).filter(Boolean);
+const genreOptions = genresList.map(g => ({ value: g, label: g }));
 
 function ArtistProfileForm() {
   const [artistName, setArtistName] = useState("");
   const [description, setDescription] = useState("");
-  const [genres, setGenres] = useState("");
+  const [genres, setGenres] = useState([]); // now an array of objects
   const [spotifyUrl, setSpotifyUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -29,9 +34,6 @@ function ArtistProfileForm() {
       return;
     }
 
-    // Prepare genres as array or string
-    const genresArray = genres.split(",").map(g => g.trim()).filter(Boolean);
-
     // Upsert artist profile
     const { error } = await supabase
       .from("artists")
@@ -39,7 +41,7 @@ function ArtistProfileForm() {
         user_id: user.id,
         artist_name: artistName,
         description,
-        genres: genresArray, // or genres: genresArray.join(",") if using text
+        genres: genres.map(g => g.value), // store as array of strings
         snippet_url: spotifyUrl,
       }, { onConflict: ['user_id'] });
 
@@ -75,15 +77,17 @@ function ArtistProfileForm() {
         <div className="text-sm text-gray-500">{wordCount}/50 words</div>
       </label>
       <label className="block mb-2">
-        Genres (comma separated):
-        <input
-          type="text"
+        Genres:
+        <Select
+          isMulti
+          options={genreOptions}
           value={genres}
-          onChange={e => setGenres(e.target.value)}
-          placeholder="e.g. pop, rock, jazz"
-          required
-          className="w-full border p-2 rounded"
+          onChange={setGenres}
+          className="basic-multi-select"
+          classNamePrefix="select"
+          placeholder="Select genres..."
         />
+        <div className="text-xs text-gray-500">Type to search. Hold Ctrl (Windows) or Cmd (Mac) to select multiple genres.</div>
       </label>
       <label className="block mb-2">
         Spotify Song URL:

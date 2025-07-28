@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import genresListRaw from '../assets/genres.txt?raw';
+import Select from 'react-select';
+
+const genresList = genresListRaw.split('\n').map(g => g.trim()).filter(Boolean);
+const genreOptions = genresList.map(g => ({ value: g, label: g }));
 
 export default function ExploreArtists() {
   const [artists, setArtists] = useState([]);
   const [search, setSearch] = useState('');
-  const [genreFilter, setGenreFilter] = useState('');
+  const [genreFilter, setGenreFilter] = useState(null); // now an object
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -23,9 +28,18 @@ export default function ExploreArtists() {
 
   const filtered = artists.filter((artist) => {
     const name = artist.artist_name || '';
-    const genres = Array.isArray(artist.genres) ? artist.genres : (artist.genres ? artist.genres.split(',') : []);
+    let genres = [];
+    if (Array.isArray(artist.genres)) {
+      genres = artist.genres;
+    } else if (typeof artist.genres === 'string') {
+      try {
+        genres = JSON.parse(artist.genres);
+      } catch {
+        genres = artist.genres.split(',').map(g => g.trim());
+      }
+    }
     const matchesSearch = name.toLowerCase().includes(search.toLowerCase());
-    const matchesGenre = genreFilter ? genres.map(g => g.trim()).includes(genreFilter) : true;
+    const matchesGenre = genreFilter ? genres.map(g => g.trim()).includes(genreFilter.value) : true;
     return matchesSearch && matchesGenre;
   });
 
@@ -41,7 +55,7 @@ export default function ExploreArtists() {
   }
 
   return (
-    <section className="p-8 min-h-screen bg-gradient-to-br from-purple-700 via-pink-600 to-red-500 font-sans">
+    <section className="p-8 min-h-screen bg-gradient-to-br from-black via-purple-900 to-black font-sans">
       <h2
         className={`text-5xl font-extrabold text-center mb-10 text-white drop-shadow-lg transform transition-opacity duration-700 ${
           mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
@@ -62,6 +76,7 @@ export default function ExploreArtists() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+<<<<<<< HEAD
         <select
           className="border border-pink-400 px-5 py-3 rounded-lg w-full md:w-1/3 focus:outline-none focus:ring-4 focus:ring-pink-500 transition text-white font-semibold bg-transparent"
           value={genreFilter}
@@ -76,6 +91,20 @@ export default function ExploreArtists() {
           <option value="Alternative">Alternative</option>
           <option value="Dance">Dance</option>
         </select>
+=======
+        <div className="w-full md:w-1/3">
+          <Select
+            options={genreOptions}
+            value={genreFilter}
+            onChange={setGenreFilter}
+            isClearable
+            placeholder="All Genres"
+            classNamePrefix="select"
+            menuPortalTarget={typeof window !== 'undefined' ? document.body : null}
+            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          />
+        </div>
+>>>>>>> 901ae28b08bc37a04b4e91d783b6264ca0d203cc
       </div>
 
       {loading ? (
@@ -83,7 +112,16 @@ export default function ExploreArtists() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
           {filtered.map((artist) => {
-            const genres = Array.isArray(artist.genres) ? artist.genres : (artist.genres ? artist.genres.split(',') : []);
+            let genres = [];
+            if (Array.isArray(artist.genres)) {
+              genres = artist.genres;
+            } else if (typeof artist.genres === 'string') {
+              try {
+                genres = JSON.parse(artist.genres);
+              } catch {
+                genres = artist.genres.split(',').map(g => g.trim());
+              }
+            }
             const genreString = genres.map(g => g.trim()).join(', ');
             const spotifyEmbedUrl = getSpotifyEmbedUrl(artist.snippet_url);
             return (

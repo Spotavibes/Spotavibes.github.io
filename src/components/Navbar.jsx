@@ -65,7 +65,7 @@ export default function Navbar({ user }) {
             className="nav-link-underline block px-4 py-2 hover:text-purple-300 md:ml-6 transition-colors rounded-lg"
             onClick={() => setIsOpen(false)}
           >
-            Card Submission
+            Profile Submission
           </Link>
           {user ? (
             <div className="flex items-center space-x-4 md:ml-6 px-4 py-2">
