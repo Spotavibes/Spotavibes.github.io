@@ -58,16 +58,16 @@ export default function ExploreArtists() {
         <input
           type="text"
           placeholder="Search by name..."
-          className="border border-pink-400 px-5 py-3 rounded-lg w-full md:w-2/3 focus:outline-none focus:ring-4 focus:ring-pink-500 transition text-purple-900 font-semibold"
+          className="border border-pink-400 px-5 py-3 rounded-lg w-full md:w-2/3 focus:outline-none focus:ring-4 focus:ring-pink-500 transition text-white placeholder-white font-semibold bg-transparent"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <select
-          className="border border-pink-400 px-5 py-3 rounded-lg w-full md:w-1/3 focus:outline-none focus:ring-4 focus:ring-pink-500 transition text-purple-900 font-semibold"
+          className="border border-pink-400 px-5 py-3 rounded-lg w-full md:w-1/3 focus:outline-none focus:ring-4 focus:ring-pink-500 transition text-white font-semibold bg-transparent"
           value={genreFilter}
           onChange={(e) => setGenreFilter(e.target.value)}
         >
-          <option value="">All Genres</option>
+          <option value="" className="text-white bg-purple-700">All Genres</option>
           <option value="Pop">Pop</option>
           <option value="Indie">Indie</option>
           <option value="Hip-Hop">Hip-Hop</option>
