@@ -10,6 +10,7 @@ import ExploreArtists from './pages/ExploreArtists'
 import Checkout from './pages/Checkout'
 import ArtistProfile from './pages/ArtistProfile'
 import InvestorDashboard from './pages/InvestorDashboard'
+import ArtistDashboard from './pages/ArtistDashboard'
 import ArtistSubmission from './pages/ArtistSubmission'
 
 // ✅ ADD: Simple success and cancel components
@@ -75,7 +76,15 @@ export default function App() {
             path="/investor-dashboard"
             element={
               <ProtectedRoute>
-                <InvestorDashboard />
+                <InvestorDashboard user={user} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/artist-dashboard"
+            element={
+              <ProtectedRoute>
+                <ArtistDashboard user={user} />
               </ProtectedRoute>
             }
           />

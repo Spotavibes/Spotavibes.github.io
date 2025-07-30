@@ -59,11 +59,26 @@ app.post(
       const timestamp         = new Date(session.created * 1000).toISOString()
 
       try {
+        // First, get the artist name from the artists table
+        const { data: artistData, error: artistError } = await supabase
+          .from('artists')
+          .select('artist_name')
+          .eq('user_id', artist_id)
+          .single()
+
+        let artist_name = `Artist #${artist_id}`; // Default fallback
+        if (artistError) {
+          console.error('Error fetching artist name:', artistError)
+          // Fallback to using artist_id if we can't get the name
+        } else {
+          artist_name = artistData?.artist_name || `Artist #${artist_id}`
+        }
+
         const { error } = await supabase
           .from('transactions')
           .insert([{
             user_id,
-            artist_name: artist_id,
+            artist_name: artist_name,
             amount_bought,
             cost,
             stripe_session_id,

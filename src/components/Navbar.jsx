@@ -67,6 +67,21 @@ export default function Navbar({ user }) {
           >
             Profile Submission
           </Link>
+          {/* Dashboards Dropdown */}
+          <div className="relative group md:ml-6 px-4 py-2">
+            <button className="flex items-center space-x-2 nav-link-underline block px-4 py-2 hover:text-yellow-300 transition-colors rounded-lg focus:outline-none">
+              <span>Dashboards</span>
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            <div className="absolute left-0 mt-2 w-40 bg-white text-indigo-900 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
+              <Link to="/investor-dashboard" className="block px-4 py-3 hover:bg-indigo-100 rounded-t-lg transition-colors" onClick={() => setIsOpen(false)}>
+                Investor
+              </Link>
+              <Link to="/artist-dashboard" className="block px-4 py-3 hover:bg-indigo-100 rounded-b-lg transition-colors" onClick={() => setIsOpen(false)}>
+                Artist
+              </Link>
+            </div>
+          </div>
           {user ? (
             <div className="flex items-center space-x-4 md:ml-6 px-4 py-2">
               <span className="select-none font-semibold">👋 {user.email}</span>

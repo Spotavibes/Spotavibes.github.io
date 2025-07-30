@@ -76,22 +76,6 @@ export default function ExploreArtists() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-<<<<<<< HEAD
-        <select
-          className="border border-pink-400 px-5 py-3 rounded-lg w-full md:w-1/3 focus:outline-none focus:ring-4 focus:ring-pink-500 transition text-white font-semibold bg-transparent"
-          value={genreFilter}
-          onChange={(e) => setGenreFilter(e.target.value)}
-        >
-          <option value="" className="text-white bg-purple-700">All Genres</option>
-          <option value="Pop">Pop</option>
-          <option value="Indie">Indie</option>
-          <option value="Hip-Hop">Hip-Hop</option>
-          <option value="Rock">Rock</option>
-          <option value="Rap">Rap</option>
-          <option value="Alternative">Alternative</option>
-          <option value="Dance">Dance</option>
-        </select>
-=======
         <div className="w-full md:w-1/3">
           <Select
             options={genreOptions}
@@ -104,7 +88,6 @@ export default function ExploreArtists() {
             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
           />
         </div>
->>>>>>> 901ae28b08bc37a04b4e91d783b6264ca0d203cc
       </div>
 
       {loading ? (

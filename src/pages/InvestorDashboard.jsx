@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
+import { supabase } from '../lib/supabaseClient'
 
 const artists = [
   {
@@ -222,7 +223,7 @@ const averageROIAllArtists = (() => {
   })
 })()
 
-export default function InvestorDashboard() {
+export default function InvestorDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('transactions')
   const [artistFilter, setArtistFilter] = useState('All')
   const [chartArtist, setChartArtist] = useState('All')
@@ -230,8 +231,42 @@ export default function InvestorDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedArtist, setSelectedArtist] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [realTransactions, setRealTransactions] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const artistNames = ['All', ...artists.map(a => a.name)]
+  // Fetch real transactions from Supabase
+  useEffect(() => {
+    async function fetchTransactions() {
+      if (!user) return
+      
+      setLoading(true)
+      try {
+        const { data, error } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('timestamp', { ascending: false })
+
+        if (error) {
+          console.error('Error fetching transactions:', error)
+          setRealTransactions([])
+        } else {
+          setRealTransactions(data || [])
+        }
+      } catch (err) {
+        console.error('Error fetching transactions:', err)
+        setRealTransactions([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTransactions()
+  }, [user])
+
+  // Get unique artist names from real transactions
+  const realArtistNames = [...new Set(realTransactions.map(tx => tx.artist_name))].filter(Boolean)
+  const artistNames = ['All', ...realArtistNames]
 
   const searchedArtists = searchTerm
     ? artistNames.filter(name => name.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -240,13 +275,19 @@ export default function InvestorDashboard() {
   const combinedArtistFilter =
     artistFilter === 'All' ? searchedArtists : searchedArtists.filter(name => name === artistFilter)
 
-  const filteredInvestments = combinedArtistFilter.includes('All')
-    ? investmentData
-    : investmentData.filter(i => combinedArtistFilter.includes(i.name))
+  // Filter real transactions based on search and filter
+  const filteredRealTransactions = combinedArtistFilter.includes('All')
+    ? realTransactions
+    : realTransactions.filter(tx => combinedArtistFilter.includes(tx.artist_name))
 
-  const filteredTransactions = combinedArtistFilter.includes('All')
-    ? transactions
-    : transactions.filter(tx => combinedArtistFilter.includes(tx.artist))
+  // Group transactions by artist for the purchases display
+  const transactionsByArtist = realTransactions.reduce((acc, tx) => {
+    if (!acc[tx.artist_name]) {
+      acc[tx.artist_name] = []
+    }
+    acc[tx.artist_name].push(tx)
+    return acc
+  }, {})
 
   const roiDataToShow = chartArtist === 'All' ? averageROIAllArtists : roiMonthlyDataPerArtist[chartArtist] || []
 
@@ -274,145 +315,29 @@ export default function InvestorDashboard() {
         Investor Dashboard
       </h1>
 
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Search artists..."
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          className="border-2 border-indigo-300 focus:border-indigo-500 rounded-lg p-3 flex-1 shadow-sm focus:shadow-indigo-300 transition duration-300 placeholder-indigo-400"
-        />
+      {loading ? (
+        <div className="text-center py-8">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          <p className="mt-2 text-indigo-600">Loading your investments...</p>
+        </div>
+      ) : (
+        <>
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="Search artists..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="border-2 border-indigo-300 focus:border-indigo-500 rounded-lg p-3 flex-1 shadow-sm focus:shadow-indigo-300 transition duration-300 placeholder-indigo-400"
+            />
 
-        <select
-          className="border-2 border-teal-300 focus:border-teal-500 rounded-lg p-3 shadow-sm focus:shadow-teal-300 transition duration-300 text-indigo-800 font-semibold"
-          value={artistFilter}
-          onChange={e => {
-            setArtistFilter(e.target.value)
-            if (chartArtist !== e.target.value) setChartArtist(e.target.value)
-          }}
-        >
-          {artistNames.map(name => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <h2 className="text-3xl font-bold mb-4 text-teal-700 drop-shadow-sm">Investment Summary</h2>
-
-      <table className="w-full border-collapse mb-10 rounded-lg overflow-hidden shadow-md">
-        <thead>
-          <tr className="bg-gradient-to-r from-indigo-400 via-purple-500 to-teal-400 text-white uppercase tracking-wide">
-            <th className="p-4 text-left">Artist</th>
-            <th className="p-4 text-right">Amount Invested</th>
-            <th className="p-4 text-right">Profit</th>
-            <th className="p-4 text-center">Details</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredInvestments.length === 0 && (
-            <tr>
-              <td colSpan={4} className="text-center p-6 text-indigo-600 font-semibold">
-                No investments found.
-              </td>
-            </tr>
-          )}
-          {filteredInvestments.map((item, idx) => (
-            <tr
-              key={item.name}
-              className={`border-b border-indigo-200 bg-white text-indigo-900 
-                transition-all duration-700 ease-out
-                ${animateRows ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-5'}
-                hover:bg-indigo-100 cursor-pointer`}
-              style={{ transitionDelay: `${idx * 100}ms` }}
-            >
-              <td className="p-4">{item.name}</td>
-              <td className="p-4 text-right font-mono">${item.amount.toLocaleString()}</td>
-              <td
-  className={`p-4 text-right font-mono ${
-    item.profit >= 0 ? 'text-green-600' : 'text-red-500'
-  }`}
->
-  ${item.profit.toLocaleString()}
-</td>
-
-              <td className="p-4 text-center">
-                <button
-                  onClick={() => openModal(item.name)}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded shadow-md transition"
-                >
-                  View
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div className="mb-6 flex border-b-4 border-indigo-600">
-        <button
-          className={`px-6 py-3 font-bold text-lg rounded-t-lg transition-colors ${
-            activeTab === 'transactions'
-              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-400'
-              : 'text-indigo-600 hover:text-indigo-800'
-          }`}
-          onClick={() => setActiveTab('transactions')}
-        >
-          Transactions
-        </button>
-        <button
-          className={`ml-6 px-6 py-3 font-bold text-lg rounded-t-lg transition-colors ${
-            activeTab === 'chart'
-              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-400'
-              : 'text-indigo-600 hover:text-indigo-800'
-          }`}
-          onClick={() => setActiveTab('chart')}
-        >
-          ROI Chart
-        </button>
-      </div>
-
-      {activeTab === 'transactions' && (
-        <ul className="mt-6 max-h-96 overflow-auto space-y-3">
-          {filteredTransactions.length === 0 && (
-            <li className="text-indigo-600 text-center font-semibold">No transactions found.</li>
-          )}
-          {filteredTransactions.map((tx, idx) => (
-            <li
-              key={`${tx.date}-${tx.artist}-${idx}`}
-              className={`p-4 bg-white rounded-lg shadow-md cursor-default
-                transition duration-700 ease-out
-                ${animateRows ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}
-                hover:shadow-xl hover:bg-indigo-50`}
-              style={{ transitionDelay: `${idx * 100}ms` }}
-            >
-              <span className="font-semibold text-indigo-700">{tx.artist}</span> —{' '}
-              <span
-                className={`${
-                  tx.type === 'Profit' ? 'text-teal-600 font-bold' : 'text-indigo-500'
-                }`}
-              >
-                {tx.type}
-              </span>{' '}
-              on <time dateTime={tx.date}>{tx.date}</time> for{' '}
-              <span className="font-mono text-indigo-900">${tx.amount.toLocaleString()}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {activeTab === 'chart' && (
-        <div className="mt-8">
-          <div className="mb-6 flex items-center space-x-4">
-            <label htmlFor="chartArtist" className="text-indigo-700 font-semibold text-lg">
-              Select Artist:
-            </label>
             <select
-              id="chartArtist"
               className="border-2 border-teal-300 focus:border-teal-500 rounded-lg p-3 shadow-sm focus:shadow-teal-300 transition duration-300 text-indigo-800 font-semibold"
-              value={chartArtist}
-              onChange={e => setChartArtist(e.target.value)}
+              value={artistFilter}
+              onChange={e => {
+                setArtistFilter(e.target.value)
+                if (chartArtist !== e.target.value) setChartArtist(e.target.value)
+              }}
             >
               {artistNames.map(name => (
                 <option key={name} value={name}>
@@ -422,38 +347,136 @@ export default function InvestorDashboard() {
             </select>
           </div>
 
-          <ResponsiveContainer width="100%" height={320}>
-            <LineChart
-              data={roiDataToShow}
-              margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
+          {/* Investment Summary */}
+          {realTransactions.length > 0 && (
+            <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white rounded-lg shadow p-4 text-center">
+                <h3 className="text-lg font-semibold text-indigo-700">Total Invested</h3>
+                <p className="text-2xl font-bold text-green-600">
+                  ${realTransactions.reduce((sum, tx) => sum + tx.cost, 0).toLocaleString()}
+                </p>
+              </div>
+              <div className="bg-white rounded-lg shadow p-4 text-center">
+                <h3 className="text-lg font-semibold text-indigo-700">Artists Supported</h3>
+                <p className="text-2xl font-bold text-blue-600">{realArtistNames.length}</p>
+              </div>
+              <div className="bg-white rounded-lg shadow p-4 text-center">
+                <h3 className="text-lg font-semibold text-indigo-700">Total Transactions</h3>
+                <p className="text-2xl font-bold text-purple-600">{realTransactions.length}</p>
+              </div>
+            </div>
+          )}
+
+          <h2 className="text-3xl font-bold mb-4 text-teal-700 drop-shadow-sm">Purchases by Artist</h2>
+          <div className="mb-10">
+            {realTransactions.length === 0 ? (
+              <div className="text-center py-8 bg-white rounded-lg shadow">
+                <p className="text-indigo-600 text-lg">No investments found.</p>
+                <p className="text-indigo-500 mt-2">Start investing in artists to see your purchases here!</p>
+              </div>
+            ) : (
+              Object.entries(transactionsByArtist).map(([artistName, artistTxs]) => (
+                <div key={artistName} className="mb-6 bg-white rounded-lg shadow p-4">
+                  <h3 className="text-xl font-bold text-indigo-700 mb-2">{artistName}</h3>
+                  <table className="w-full border-collapse mb-2">
+                    <thead>
+                      <tr className="bg-indigo-100 text-indigo-800">
+                        <th className="p-2 text-left">Date</th>
+                        <th className="p-2 text-right">Amount</th>
+                        <th className="p-2 text-center">Units</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {artistTxs.map((tx, idx) => (
+                        <tr key={tx.id || `${tx.timestamp}-${idx}`} className="border-b border-indigo-50">
+                          <td className="p-2">{new Date(tx.timestamp).toLocaleDateString()}</td>
+                          <td className="p-2 text-right font-mono">${tx.cost.toLocaleString()}</td>
+                          <td className="p-2 text-center">{tx.amount_bought}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="mb-6 flex border-b-4 border-indigo-600">
+            <button
+              className={`px-6 py-3 font-bold text-lg rounded-t-lg transition-colors ${
+                activeTab === 'transactions'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-400'
+                  : 'text-indigo-600 hover:text-indigo-800'
+              }`}
+              onClick={() => setActiveTab('transactions')}
             >
-              <CartesianGrid stroke="#c4f0f9" strokeDasharray="4 4" />
-              <XAxis dataKey="month" stroke="#4ade80" fontWeight="bold" />
-              <YAxis
-                unit="%"
-                stroke="#7c3aed"
-                domain={[0, dataMax => dataMax + 5]}
-                fontWeight="bold"
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#eef6ff',
-                  borderRadius: '8px',
-                  borderColor: '#7c3aed',
-                  color: '#312e81',
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="roi"
-                stroke="#7c3aed"
-                strokeWidth={3}
-                dot={{ r: 6, fill: '#c084fc' }}
-                activeDot={{ r: 8, fill: '#a78bfa' }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+              Transactions
+            </button>
+            <button
+              className={`ml-6 px-6 py-3 font-bold text-lg rounded-t-lg transition-colors ${
+                activeTab === 'chart'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-400'
+                  : 'text-indigo-600 hover:text-indigo-800'
+              }`}
+              onClick={() => setActiveTab('chart')}
+            >
+              ROI Chart
+            </button>
+          </div>
+
+          {activeTab === 'transactions' && (
+            <ul className="mt-6 max-h-96 overflow-auto space-y-3">
+              {filteredRealTransactions.length === 0 && (
+                <li className="text-indigo-600 text-center font-semibold">No transactions found.</li>
+              )}
+              {filteredRealTransactions.map((tx, idx) => (
+                <li
+                  key={tx.id || `${tx.timestamp}-${idx}`}
+                  className={`p-4 bg-white rounded-lg shadow-md cursor-default
+                    transition duration-700 ease-out
+                    ${animateRows ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}
+                    hover:shadow-xl hover:bg-indigo-50`}
+                  style={{ transitionDelay: `${idx * 100}ms` }}
+                >
+                  <span className="font-semibold text-indigo-700">{tx.artist_name}</span> —{' '}
+                  <span className="text-indigo-500">Investment</span>{' '}
+                  on <time dateTime={tx.timestamp}>{new Date(tx.timestamp).toLocaleDateString()}</time> for{' '}
+                  <span className="font-mono text-indigo-900">${tx.cost.toLocaleString()}</span>
+                  {tx.amount_bought > 1 && (
+                    <span className="text-indigo-600 ml-2">({tx.amount_bought} units)</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {activeTab === 'chart' && (
+            <div className="mt-8">
+              <div className="mb-6 flex items-center space-x-4">
+                <label htmlFor="chartArtist" className="text-indigo-700 font-semibold text-lg">
+                  Select Artist:
+                </label>
+                <select
+                  id="chartArtist"
+                  className="border-2 border-teal-300 focus:border-teal-500 rounded-lg p-3 shadow-sm focus:shadow-teal-300 transition duration-300 text-indigo-800 font-semibold"
+                  value={chartArtist}
+                  onChange={e => setChartArtist(e.target.value)}
+                >
+                  {artistNames.map(name => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="text-center py-8 bg-white rounded-lg shadow">
+                <p className="text-indigo-600">ROI tracking coming soon!</p>
+                <p className="text-indigo-500 mt-2">We're working on tracking your investment returns.</p>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {isModalOpen && selectedArtist && (
