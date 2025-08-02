@@ -73,13 +73,13 @@ export default function Navbar({ user }) {
 
   return (
     <>
-      <nav className="navbar-animated text-white p-4 shadow-md font-extrabold" style={{ fontFamily: 'Poppins, Montserrat, Arial, sans-serif' }}>
+      <nav className="navbar-animated text-white p-4 shadow-md font-extrabold bg-gradient-to-r from-[#0a0a23] via-[#1a0033] to-[#2d0036]" style={{ fontFamily: 'Poppins, Montserrat, Arial, sans-serif' }}>
         <div className="max-w-7xl mx-auto flex justify-between items-center relative">
           <div className="logo-gradient-glow text-2xl font-extrabold select-none cursor-default tracking-tight">Spotavibe</div>
 
           {/* Hamburger button */}
           <button
-            className="md:hidden block p-2 rounded bg-indigo-800 hover:bg-indigo-700 focus:outline-none shadow-md border border-indigo-700 transition-colors"
+            className="md:hidden block p-2 rounded bg-white/10 hover:bg-white/20 focus:outline-none shadow-md border border-white/20 transition-colors"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
             aria-expanded={isOpen}
@@ -103,7 +103,7 @@ export default function Navbar({ user }) {
 
           {/* Navigation links */}
           <div
-            className={`flex-col md:flex-row md:flex md:items-center absolute md:static top-16 left-0 right-0 bg-indigo-900 md:bg-transparent transition-transform duration-300 ease-in-out z-10 ${
+            className={`flex-col md:flex-row md:flex md:items-center absolute md:static top-16 left-0 right-0 bg-gradient-to-br from-[#0a0a23] to-[#1a0033] md:bg-transparent transition-transform duration-300 ease-in-out z-10 ${
               isOpen ? 'flex' : 'hidden'
             }`}
           >
@@ -170,7 +170,7 @@ export default function Navbar({ user }) {
       {isDropdownOpen && createPortal(
         <div 
           data-dropdown
-          className="fixed w-40 bg-white text-indigo-900 rounded-lg shadow-lg transition-all duration-200 z-[999999]"
+          className="fixed w-40 bg-gradient-to-br from-[#0a0a23] to-[#1a0033] text-white border border-white/20 rounded-lg shadow-lg transition-all duration-200 z-[999999]"
           style={{
             top: `${dropdownPosition.top}px`,
             left: `${dropdownPosition.left}px`
@@ -190,7 +190,7 @@ export default function Navbar({ user }) {
         >
           <Link 
             to="/investor-dashboard" 
-            className="block px-4 py-3 hover:bg-indigo-100 rounded-t-lg transition-colors" 
+            className="block px-4 py-3 hover:bg-white/10 rounded-t-lg transition-colors" 
             onClick={() => {
               setIsOpen(false)
               setIsDropdownOpen(false)
@@ -200,7 +200,7 @@ export default function Navbar({ user }) {
           </Link>
           <Link 
             to="/artist-dashboard" 
-            className="block px-4 py-3 hover:bg-indigo-100 rounded-b-lg transition-colors" 
+            className="block px-4 py-3 hover:bg-white/10 rounded-b-lg transition-colors" 
             onClick={() => {
               setIsOpen(false)
               setIsDropdownOpen(false)

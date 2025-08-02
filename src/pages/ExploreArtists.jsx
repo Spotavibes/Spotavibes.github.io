@@ -10,7 +10,7 @@ const genreOptions = genresList.map(g => ({ value: g, label: g }));
 export default function ExploreArtists() {
   const [artists, setArtists] = useState([]);
   const [search, setSearch] = useState('');
-  const [genreFilter, setGenreFilter] = useState(null); // now an object
+  const [genreFilter, setGenreFilter] = useState(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -43,10 +43,8 @@ export default function ExploreArtists() {
     return matchesSearch && matchesGenre;
   });
 
-  // Helper to get Spotify embed URL from a Spotify track/playlist URL
   function getSpotifyEmbedUrl(url) {
     if (!url) return null;
-    // Accepts both open.spotify.com/track/... and open.spotify.com/playlist/...
     const match = url.match(/open\.spotify\.com\/(track|playlist)\/([a-zA-Z0-9]+)/);
     if (match) {
       return `https://open.spotify.com/embed/${match[1]}/${match[2]}`;
