@@ -125,104 +125,6 @@ const artists = [
   }
 ]
 
-
-const investmentData = [
-  { name: 'Luna Waves', amount: 1200, profit: 400 },
-  { name: 'Echo Pulse', amount: 1800, profit: -150 },
-  { name: 'Nova Sky', amount: 1500, profit: 450 },
-  { name: 'Violet Drift', amount: 1000, profit: -200 },
-  { name: 'Crimson Beat', amount: 1600, profit: 300 },
-  { name: 'Silver Lining', amount: 2000, profit: -100 },
-  { name: 'Golden Hour', amount: 1400, profit: 250 },
-  { name: 'Midnight Echo', amount: 1700, profit: 500 },
-]
-
-
-
-const transactions = [
-  { artist: 'Luna Waves', date: '2025-05-10', type: 'Investment', amount: 200 },
-  { artist: 'Echo Pulse', date: '2025-05-12', type: 'Profit', amount: 100 },
-  { artist: 'Nova Sky', date: '2025-05-15', type: 'Investment', amount: 150 },
-  { artist: 'Luna Waves', date: '2025-05-18', type: 'Profit', amount: 50 },
-  { artist: 'Violet Drift', date: '2025-05-20', type: 'Investment', amount: 300 },
-  { artist: 'Crimson Beat', date: '2025-05-22', type: 'Profit', amount: 120 },
-  { artist: 'Silver Lining', date: '2025-05-25', type: 'Investment', amount: 180 },
-  { artist: 'Golden Hour', date: '2025-05-27', type: 'Profit', amount: 90 },
-  { artist: 'Midnight Echo', date: '2025-05-30', type: 'Investment', amount: 210 },
-]
-
-
-const roiMonthlyDataPerArtist = {
-  'Luna Waves': [
-    { month: 'Jan', roi: 4 },
-    { month: 'Feb', roi: 6 },
-    { month: 'Mar', roi: 7 },
-    { month: 'Apr', roi: 5 },
-    { month: 'May', roi: 6 },
-  ],
-  'Echo Pulse': [
-    { month: 'Jan', roi: 5 },
-    { month: 'Feb', roi: 7 },
-    { month: 'Mar', roi: 8 },
-    { month: 'Apr', roi: 6 },
-    { month: 'May', roi: 7 },
-  ],
-  'Nova Sky': [
-    { month: 'Jan', roi: 3 },
-    { month: 'Feb', roi: 5 },
-    { month: 'Mar', roi: 6 },
-    { month: 'Apr', roi: 4 },
-    { month: 'May', roi: 5 },
-  ],
-  'Violet Drift': [
-    { month: 'Jan', roi: 2 },
-    { month: 'Feb', roi: 4 },
-    { month: 'Mar', roi: 3 },
-    { month: 'Apr', roi: 2 },
-    { month: 'May', roi: 1 },
-  ],
-  'Crimson Beat': [
-    { month: 'Jan', roi: 5 },
-    { month: 'Feb', roi: 6 },
-    { month: 'Mar', roi: 7 },
-    { month: 'Apr', roi: 6 },
-    { month: 'May', roi: 5 },
-  ],
-  'Silver Lining': [
-    { month: 'Jan', roi: 4 },
-    { month: 'Feb', roi: 3 },
-    { month: 'Mar', roi: 2 },
-    { month: 'Apr', roi: 1 },
-    { month: 'May', roi: 0 },
-  ],
-  'Golden Hour': [
-    { month: 'Jan', roi: 6 },
-    { month: 'Feb', roi: 7 },
-    { month: 'Mar', roi: 8 },
-    { month: 'Apr', roi: 7 },
-    { month: 'May', roi: 8 },
-  ],
-  'Midnight Echo': [
-    { month: 'Jan', roi: 5 },
-    { month: 'Feb', roi: 6 },
-    { month: 'Mar', roi: 7 },
-    { month: 'Apr', roi: 6 },
-    { month: 'May', roi: 7 },
-  ],
-}
-
-const averageROIAllArtists = (() => {
-  const months = roiMonthlyDataPerArtist[artists[0].name].map(d => d.month)
-  return months.map(month => {
-    const rois = artists.map(artist => {
-      const data = roiMonthlyDataPerArtist[artist.name].find(d => d.month === month)
-      return data ? data.roi : 0
-    })
-    const avg = rois.reduce((a, b) => a + b, 0) / rois.length
-    return { month, roi: Number(avg.toFixed(1)) }
-  })
-})()
-
 export default function InvestorDashboard({ user }) {
   const [activeTab, setActiveTab] = useState('transactions')
   const [artistFilter, setArtistFilter] = useState('All')
@@ -233,6 +135,13 @@ export default function InvestorDashboard({ user }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [realTransactions, setRealTransactions] = useState([])
   const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
+  const [roiData, setRoiData] = useState([])
+  const [artistPrices, setArtistPrices] = useState({})
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Fetch real transactions from Supabase
   useEffect(() => {
@@ -264,6 +173,66 @@ export default function InvestorDashboard({ user }) {
     fetchTransactions()
   }, [user])
 
+  // Calculate ROI data based on real transactions
+  useEffect(() => {
+    if (realTransactions.length === 0) {
+      setRoiData([])
+      return
+    }
+
+    // Group transactions by artist
+    const transactionsByArtist = realTransactions.reduce((acc, tx) => {
+      if (!acc[tx.artist_name]) {
+        acc[tx.artist_name] = []
+      }
+      acc[tx.artist_name].push(tx)
+      return acc
+    }, {})
+
+    // Calculate ROI for each artist
+    const roiCalculations = Object.entries(transactionsByArtist).map(([artistName, transactions]) => {
+      const totalInvested = transactions.reduce((sum, tx) => sum + tx.cost, 0)
+      const totalShares = transactions.reduce((sum, tx) => sum + tx.amount_bought, 0)
+      
+      // Get current price (this would come from your backend)
+      const currentPrice = getCurrentPrice(artistName)
+      const currentValue = totalShares * currentPrice
+      const roi = ((currentValue - totalInvested) / totalInvested) * 100
+
+      return {
+        artist: artistName,
+        totalInvested,
+        totalShares,
+        currentPrice,
+        currentValue,
+        roi: Number(roi.toFixed(2)),
+        transactions: transactions.length
+      }
+    })
+
+    setRoiData(roiCalculations)
+  }, [realTransactions])
+
+  // Mock function to get current prices - replace with real API call
+  function getCurrentPrice(artistName) {
+    // This would be replaced with a real API call to get current prices
+    const basePrices = {
+      'Luna Waves': 25,
+      'Echo Pulse': 30,
+      'Nova Sky': 20,
+      'Violet Drift': 28,
+      'Crimson Beat': 35,
+      'Silver Lining': 22,
+      'Golden Hour': 27,
+      'Midnight Echo': 25
+    }
+
+    // Simulate price fluctuations (replace with real data)
+    const basePrice = basePrices[artistName] || 25
+    const fluctuation = (Math.random() - 0.5) * 0.4 // ±20% fluctuation
+    return basePrice * (1 + fluctuation)
+  }
+
   // Get unique artist names from real transactions
   const realArtistNames = [...new Set(realTransactions.map(tx => tx.artist_name))].filter(Boolean)
   const artistNames = ['All', ...realArtistNames]
@@ -289,7 +258,15 @@ export default function InvestorDashboard({ user }) {
     return acc
   }, {})
 
-  const roiDataToShow = chartArtist === 'All' ? averageROIAllArtists : roiMonthlyDataPerArtist[chartArtist] || []
+  // Filter ROI data based on selected artist
+  const filteredRoiData = chartArtist === 'All' 
+    ? roiData 
+    : roiData.filter(item => item.artist === chartArtist)
+
+  // Calculate total portfolio ROI
+  const totalPortfolioRoi = roiData.length > 0 
+    ? roiData.reduce((sum, item) => sum + item.roi, 0) / roiData.length 
+    : 0
 
   useEffect(() => {
     setAnimateRows(false)
@@ -299,8 +276,8 @@ export default function InvestorDashboard({ user }) {
 
   function openModal(artistName) {
     const artistInfo = artists.find(a => a.name === artistName)
-    const investmentInfo = investmentData.find(i => i.name === artistName)
-    setSelectedArtist({ ...artistInfo, ...investmentInfo })
+    const roiInfo = roiData.find(r => r.artist === artistName)
+    setSelectedArtist({ ...artistInfo, ...roiInfo })
     setIsModalOpen(true)
   }
 
@@ -310,227 +287,343 @@ export default function InvestorDashboard({ user }) {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto bg-gradient-to-tr from-purple-50 via-teal-50 to-indigo-50 rounded-lg shadow-lg">
-      <h1 className="text-5xl font-extrabold mb-8 text-indigo-700 drop-shadow-md select-none">
-        Investor Dashboard
-      </h1>
-
-      {loading ? (
-        <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-          <p className="mt-2 text-indigo-600">Loading your investments...</p>
+    <section className="min-h-screen bg-[#0a0a23] font-sans">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 to-blue-900/20"></div>
+        <div className="relative z-10 px-8 py-16 text-center">
+          <h1
+            className={`text-6xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent transition-all duration-1000 ${
+              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
+            Investor Dashboard
+          </h1>
+          <p
+            className={`text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto transition-all duration-1000 delay-300 ${
+              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
+            Track your investments, monitor performance, and manage your portfolio.
+          </p>
         </div>
-      ) : (
-        <>
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <input
-              type="text"
-              placeholder="Search artists..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="border-2 border-indigo-300 focus:border-indigo-500 rounded-lg p-3 flex-1 shadow-sm focus:shadow-indigo-300 transition duration-300 placeholder-indigo-400"
-            />
+      </div>
 
-            <select
-              className="border-2 border-teal-300 focus:border-teal-500 rounded-lg p-3 shadow-sm focus:shadow-teal-300 transition duration-300 text-indigo-800 font-semibold"
-              value={artistFilter}
-              onChange={e => {
-                setArtistFilter(e.target.value)
-                if (chartArtist !== e.target.value) setChartArtist(e.target.value)
-              }}
-            >
-              {artistNames.map(name => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Investment Summary */}
-          {realTransactions.length > 0 && (
-            <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg shadow p-4 text-center">
-                <h3 className="text-lg font-semibold text-indigo-700">Total Invested</h3>
-                <p className="text-2xl font-bold text-green-600">
-                  ${realTransactions.reduce((sum, tx) => sum + tx.cost, 0).toLocaleString()}
-                </p>
-              </div>
-              <div className="bg-white rounded-lg shadow p-4 text-center">
-                <h3 className="text-lg font-semibold text-indigo-700">Artists Supported</h3>
-                <p className="text-2xl font-bold text-blue-600">{realArtistNames.length}</p>
-              </div>
-              <div className="bg-white rounded-lg shadow p-4 text-center">
-                <h3 className="text-lg font-semibold text-indigo-700">Total Transactions</h3>
-                <p className="text-2xl font-bold text-purple-600">{realTransactions.length}</p>
-              </div>
+      {/* Dashboard Content */}
+      <div className="px-8 pb-16">
+        <div
+          className={`max-w-7xl mx-auto bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 transition-all duration-1000 delay-500 ${
+            mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+              <p className="mt-2 text-gray-300">Loading your investments...</p>
             </div>
-          )}
+          ) : (
+            <>
+              <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <input
+                  type="text"
+                  placeholder="Search artists..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all flex-1"
+                />
 
-          <h2 className="text-3xl font-bold mb-4 text-teal-700 drop-shadow-sm">Purchases by Artist</h2>
-          <div className="mb-10">
-            {realTransactions.length === 0 ? (
-              <div className="text-center py-8 bg-white rounded-lg shadow">
-                <p className="text-indigo-600 text-lg">No investments found.</p>
-                <p className="text-indigo-500 mt-2">Start investing in artists to see your purchases here!</p>
-              </div>
-            ) : (
-              Object.entries(transactionsByArtist).map(([artistName, artistTxs]) => (
-                <div key={artistName} className="mb-6 bg-white rounded-lg shadow p-4">
-                  <h3 className="text-xl font-bold text-indigo-700 mb-2">{artistName}</h3>
-                  <table className="w-full border-collapse mb-2">
-                    <thead>
-                      <tr className="bg-indigo-100 text-indigo-800">
-                        <th className="p-2 text-left">Date</th>
-                        <th className="p-2 text-right">Amount</th>
-                        <th className="p-2 text-center">Units</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {artistTxs.map((tx, idx) => (
-                        <tr key={tx.id || `${tx.timestamp}-${idx}`} className="border-b border-indigo-50">
-                          <td className="p-2">{new Date(tx.timestamp).toLocaleDateString()}</td>
-                          <td className="p-2 text-right font-mono">${tx.cost.toLocaleString()}</td>
-                          <td className="p-2 text-center">{tx.amount_bought}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ))
-            )}
-          </div>
-
-          <div className="mb-6 flex border-b-4 border-indigo-600">
-            <button
-              className={`px-6 py-3 font-bold text-lg rounded-t-lg transition-colors ${
-                activeTab === 'transactions'
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-400'
-                  : 'text-indigo-600 hover:text-indigo-800'
-              }`}
-              onClick={() => setActiveTab('transactions')}
-            >
-              Transactions
-            </button>
-            <button
-              className={`ml-6 px-6 py-3 font-bold text-lg rounded-t-lg transition-colors ${
-                activeTab === 'chart'
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-400'
-                  : 'text-indigo-600 hover:text-indigo-800'
-              }`}
-              onClick={() => setActiveTab('chart')}
-            >
-              ROI Chart
-            </button>
-          </div>
-
-          {activeTab === 'transactions' && (
-            <ul className="mt-6 max-h-96 overflow-auto space-y-3">
-              {filteredRealTransactions.length === 0 && (
-                <li className="text-indigo-600 text-center font-semibold">No transactions found.</li>
-              )}
-              {filteredRealTransactions.map((tx, idx) => (
-                <li
-                  key={tx.id || `${tx.timestamp}-${idx}`}
-                  className={`p-4 bg-white rounded-lg shadow-md cursor-default
-                    transition duration-700 ease-out
-                    ${animateRows ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}
-                    hover:shadow-xl hover:bg-indigo-50`}
-                  style={{ transitionDelay: `${idx * 100}ms` }}
-                >
-                  <span className="font-semibold text-indigo-700">{tx.artist_name}</span> —{' '}
-                  <span className="text-indigo-500">Investment</span>{' '}
-                  on <time dateTime={tx.timestamp}>{new Date(tx.timestamp).toLocaleDateString()}</time> for{' '}
-                  <span className="font-mono text-indigo-900">${tx.cost.toLocaleString()}</span>
-                  {tx.amount_bought > 1 && (
-                    <span className="text-indigo-600 ml-2">({tx.amount_bought} units)</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {activeTab === 'chart' && (
-            <div className="mt-8">
-              <div className="mb-6 flex items-center space-x-4">
-                <label htmlFor="chartArtist" className="text-indigo-700 font-semibold text-lg">
-                  Select Artist:
-                </label>
                 <select
-                  id="chartArtist"
-                  className="border-2 border-teal-300 focus:border-teal-500 rounded-lg p-3 shadow-sm focus:shadow-teal-300 transition duration-300 text-indigo-800 font-semibold"
-                  value={chartArtist}
-                  onChange={e => setChartArtist(e.target.value)}
+                  className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  value={artistFilter}
+                  onChange={e => {
+                    setArtistFilter(e.target.value)
+                    if (chartArtist !== e.target.value) setChartArtist(e.target.value)
+                  }}
                 >
                   {artistNames.map(name => (
-                    <option key={name} value={name}>
+                    <option key={name} value={name} className="bg-[#0a0a23] text-white">
                       {name}
                     </option>
                   ))}
                 </select>
               </div>
 
-              <div className="text-center py-8 bg-white rounded-lg shadow">
-                <p className="text-indigo-600">ROI tracking coming soon!</p>
-                <p className="text-indigo-500 mt-2">We're working on tracking your investment returns.</p>
+              {/* Investment Summary */}
+              {realTransactions.length > 0 && (
+                <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center">
+                    <h3 className="text-lg font-semibold text-white mb-2">Total Invested</h3>
+                    <p className="text-3xl font-bold text-green-400">
+                      ${realTransactions.reduce((sum, tx) => sum + tx.cost, 0).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center">
+                    <h3 className="text-lg font-semibold text-white mb-2">Artists Supported</h3>
+                    <p className="text-3xl font-bold text-blue-400">{realArtistNames.length}</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center">
+                    <h3 className="text-lg font-semibold text-white mb-2">Total Transactions</h3>
+                    <p className="text-3xl font-bold text-purple-400">{realTransactions.length}</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center">
+                    <h3 className="text-lg font-semibold text-white mb-2">Portfolio ROI</h3>
+                    <p className={`text-3xl font-bold ${totalPortfolioRoi >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {totalPortfolioRoi.toFixed(1)}%
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <h2 className="text-3xl font-bold mb-6 text-white">Purchases by Artist</h2>
+              <div className="mb-10">
+                {realTransactions.length === 0 ? (
+                  <div className="text-center py-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl">
+                    <p className="text-gray-300 text-lg">No investments found.</p>
+                    <p className="text-gray-400 mt-2">Start investing in artists to see your purchases here!</p>
+                  </div>
+                ) : (
+                  Object.entries(transactionsByArtist).map(([artistName, artistTxs]) => {
+                    const roiInfo = roiData.find(r => r.artist === artistName)
+                    return (
+                      <div key={artistName} className="mb-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="text-xl font-bold text-white">{artistName}</h3>
+                          {roiInfo && (
+                            <div className="text-right">
+                              <p className={`text-lg font-bold ${roiInfo.roi >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                {roiInfo.roi.toFixed(1)}% ROI
+                              </p>
+                              <p className="text-sm text-gray-300">
+                                Current Value: ${roiInfo.currentValue.toFixed(2)}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="overflow-x-auto">
+                          <table className="w-full border-collapse">
+                            <thead>
+                              <tr className="border-b border-white/20">
+                                <th className="p-3 text-left text-white font-semibold">Date</th>
+                                <th className="p-3 text-right text-white font-semibold">Amount</th>
+                                <th className="p-3 text-center text-white font-semibold">Units</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {artistTxs.map((tx, idx) => (
+                                <tr key={tx.id || `${tx.timestamp}-${idx}`} className="border-b border-white/10">
+                                  <td className="p-3 text-gray-300">{new Date(tx.timestamp).toLocaleDateString()}</td>
+                                  <td className="p-3 text-right font-mono text-green-400">${tx.cost.toLocaleString()}</td>
+                                  <td className="p-3 text-center text-gray-300">{tx.amount_bought}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
               </div>
-            </div>
+
+              <div className="mb-6 flex border-b-4 border-purple-600">
+                <button
+                  className={`px-6 py-3 font-bold text-lg rounded-t-lg transition-colors ${
+                    activeTab === 'transactions'
+                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-400'
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                  onClick={() => setActiveTab('transactions')}
+                >
+                  Transactions
+                </button>
+                <button
+                  className={`ml-6 px-6 py-3 font-bold text-lg rounded-t-lg transition-colors ${
+                    activeTab === 'chart'
+                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-400'
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                  onClick={() => setActiveTab('chart')}
+                >
+                  ROI Chart
+                </button>
+              </div>
+
+              {activeTab === 'transactions' && (
+                <ul className="mt-6 max-h-96 overflow-auto space-y-3">
+                  {filteredRealTransactions.length === 0 && (
+                    <li className="text-gray-300 text-center font-semibold">No transactions found.</li>
+                  )}
+                  {filteredRealTransactions.map((tx, idx) => (
+                    <li
+                      key={tx.id || `${tx.timestamp}-${idx}`}
+                      className={`p-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl cursor-default
+                        transition duration-700 ease-out
+                        ${animateRows ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}
+                        hover:bg-white/20 hover:border-purple-500/50`}
+                      style={{ transitionDelay: `${idx * 100}ms` }}
+                    >
+                      <span className="font-semibold text-white">{tx.artist_name}</span> —{' '}
+                      <span className="text-purple-300">Investment</span>{' '}
+                      on <time dateTime={tx.timestamp} className="text-gray-300">{new Date(tx.timestamp).toLocaleDateString()}</time> for{' '}
+                      <span className="font-mono text-green-400">${tx.cost.toLocaleString()}</span>
+                      {tx.amount_bought > 1 && (
+                        <span className="text-purple-300 ml-2">({tx.amount_bought} units)</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {activeTab === 'chart' && (
+                <div className="mt-8">
+                  <div className="mb-6 flex items-center space-x-4">
+                    <label htmlFor="chartArtist" className="text-white font-semibold text-lg">
+                      Select Artist:
+                    </label>
+                    <select
+                      id="chartArtist"
+                      className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      value={chartArtist}
+                      onChange={e => setChartArtist(e.target.value)}
+                    >
+                      {artistNames.map(name => (
+                        <option key={name} value={name} className="bg-[#0a0a23] text-white">
+                          {name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {filteredRoiData.length === 0 ? (
+                    <div className="text-center py-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl">
+                      <p className="text-gray-300">No ROI data available.</p>
+                      <p className="text-gray-400 mt-2">Make some investments to see your returns!</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {/* ROI Summary Cards */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {filteredRoiData.map((item, index) => (
+                          <div key={index} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6">
+                            <h3 className="text-lg font-bold text-white mb-2">{item.artist}</h3>
+                            <div className="space-y-2">
+                              <p className="text-gray-300">
+                                <span className="text-white font-semibold">Total Invested:</span> ${item.totalInvested.toFixed(2)}
+                              </p>
+                              <p className="text-gray-300">
+                                <span className="text-white font-semibold">Current Value:</span> ${item.currentValue.toFixed(2)}
+                              </p>
+                              <p className="text-gray-300">
+                                <span className="text-white font-semibold">Shares:</span> {item.totalShares}
+                              </p>
+                              <p className={`text-lg font-bold ${item.roi >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                ROI: {item.roi.toFixed(1)}%
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* ROI Chart */}
+                      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6">
+                        <h3 className="text-xl font-bold text-white mb-4">ROI Performance</h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                          <LineChart data={filteredRoiData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                            <XAxis 
+                              dataKey="artist" 
+                              stroke="white"
+                              tick={{ fill: 'white' }}
+                            />
+                            <YAxis 
+                              stroke="white"
+                              tick={{ fill: 'white' }}
+                              tickFormatter={(value) => `${value}%`}
+                            />
+                            <Tooltip 
+                              contentStyle={{
+                                backgroundColor: 'rgba(26, 0, 51, 0.95)',
+                                border: '1px solid rgba(255, 255, 255, 0.2)',
+                                borderRadius: '8px',
+                                color: 'white'
+                              }}
+                              formatter={(value) => [`${value}%`, 'ROI']}
+                            />
+                            <Line 
+                              type="monotone" 
+                              dataKey="roi" 
+                              stroke="#a855f7" 
+                              strokeWidth={3}
+                              dot={{ fill: '#a855f7', strokeWidth: 2, r: 6 }}
+                              activeDot={{ r: 8, stroke: '#a855f7', strokeWidth: 2 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
           )}
-        </>
-      )}
+        </div>
+      </div>
 
       {isModalOpen && selectedArtist && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-indigo-900 bg-opacity-80 z-50 p-4"
+          className="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-50 p-4"
           onClick={closeModal}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full relative animate-fadeInUp"
+            className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 max-w-md w-full relative animate-fadeInUp"
             onClick={e => e.stopPropagation()}
           >
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 text-indigo-600 hover:text-indigo-900 text-3xl font-bold transition-colors"
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-3xl font-bold transition-colors"
               aria-label="Close modal"
             >
               ×
             </button>
-            <h3 className="text-3xl font-extrabold mb-4 text-indigo-700">{selectedArtist.name}</h3>
+            <h3 className="text-3xl font-extrabold mb-4 text-white">{selectedArtist.name}</h3>
             <img
               src={selectedArtist.image}
               alt={selectedArtist.name}
               className="mb-6 w-full h-56 object-cover rounded-lg shadow-lg"
             />
-            <p className="mb-2 text-indigo-800">
-              <strong>Genre:</strong> {selectedArtist.genre}
+            <p className="mb-2 text-gray-300">
+              <strong className="text-white">Genre:</strong> {selectedArtist.genre}
             </p>
-            <p className="mb-2 text-indigo-800">
-              <strong>Location:</strong> {selectedArtist.location}
+            <p className="mb-2 text-gray-300">
+              <strong className="text-white">Location:</strong> {selectedArtist.location}
             </p>
-            <p className="mb-2 text-indigo-800">
-              <strong>Price per Unit:</strong> {selectedArtist.price}
+            <p className="mb-2 text-gray-300">
+              <strong className="text-white">Price per Unit:</strong> {selectedArtist.price}
             </p>
-            <p className="mb-2 text-indigo-800">
-              <strong>Amount Invested:</strong>{' '}
-              {selectedArtist.amount ? `$${selectedArtist.amount.toLocaleString()}` : 'N/A'}
+            <p className="mb-2 text-gray-300">
+              <strong className="text-white">Amount Invested:</strong>{' '}
+              {selectedArtist.totalInvested ? `$${selectedArtist.totalInvested.toFixed(2)}` : 'N/A'}
             </p>
-            <p className="mb-2 text-indigo-800">
-  <strong>Profit:</strong>{' '}
-  <span
-    className={
-      selectedArtist.profit > 0
-        ? 'text-green-600 font-semibold'
-        : selectedArtist.profit < 0
-        ? 'text-red-500 font-semibold'
-        : 'text-indigo-800'
-    }
-  >
-    {selectedArtist.profit !== undefined
-      ? `$${selectedArtist.profit.toLocaleString()}`
-      : 'N/A'}
-  </span>
-</p>
-
+            <p className="mb-2 text-gray-300">
+              <strong className="text-white">Current Value:</strong>{' '}
+              {selectedArtist.currentValue ? `$${selectedArtist.currentValue.toFixed(2)}` : 'N/A'}
+            </p>
+            <p className="mb-2 text-gray-300">
+              <strong className="text-white">ROI:</strong>{' '}
+              <span
+                className={
+                  selectedArtist.roi > 0
+                    ? 'text-green-400 font-semibold'
+                    : selectedArtist.roi < 0
+                    ? 'text-red-400 font-semibold'
+                    : 'text-gray-300'
+                }
+              >
+                {selectedArtist.roi !== undefined
+                  ? `${selectedArtist.roi.toFixed(1)}%`
+                  : 'N/A'}
+              </span>
+            </p>
           </div>
         </div>
       )}
@@ -550,6 +643,6 @@ export default function InvestorDashboard({ user }) {
           animation: fadeInUp 0.4s ease forwards;
         }
       `}</style>
-    </div>
+    </section>
   )
 }

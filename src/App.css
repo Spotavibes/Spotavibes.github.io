@@ -178,19 +178,9 @@
   pointer-events: none;
 }
 
-/* Navbar animated dark gradient background and glassmorphism */
+/* Navbar background - no animation */
 .navbar-animated {
-  background: linear-gradient(90deg, #0a0a23 0%, #1a0033 50%, #2d0036 100%);
-  background-size: 200% 200%;
-  animation: navbarGradientMove 8s ease-in-out infinite alternate;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1.5px solid rgba(255,255,255,0.08);
-  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.18);
-}
-@keyframes navbarGradientMove {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+  background: #0a0a23;
 }
 
 /* Logo gradient and glow */
@@ -1254,6 +1244,17 @@ html {
 /* Performance optimizations */
 * {
   will-change: auto;
+}
+
+/* Remove all focus outlines */
+*:focus {
+  outline: none !important;
+}
+
+/* Remove focus ring from all elements */
+*:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .optimized-animation {

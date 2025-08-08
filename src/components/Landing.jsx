@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
 const SPOTAVIBE_LETTERS = [
   { letter: 'S', color: 'spotavibe-letter' },
@@ -29,137 +29,29 @@ export default function Landing() {
       <section className="min-h-screen bg-gradient-to-br from-[#0a0a23] via-[#1a0033] to-[#2d0036] relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         
-        {/* Grid of Spotify Embeds */}
+        {/* Grid of Music Placeholders */}
         <div className="absolute inset-0 p-8">
-          <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 h-full">
-            {[
-              "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b", // Blinding Lights – The Weeknd
-              "https://open.spotify.com/track/7ouMYWpwJ422jRcDASZB7P", // Sunflower – Post Malone, Swae Lee
-              "https://open.spotify.com/track/3AJwUDP919kvQ9QcozQPxg", // Someone You Loved – Lewis Capaldi
-              "https://open.spotify.com/track/5nNmj1cLH3r4aA4XDJ2bgY", // Shape of You – Ed Sheeran
-              "https://open.spotify.com/track/2Fxmhks0bxGSBdJ92vM42m", // Bad Guy – Billie Eilish
-              "https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC", // Never Gonna Give You Up – Rick Astley
-              "https://open.spotify.com/track/1AhDOtG9vPSOmsWgNW0BEY", // Take On Me – a-ha
-              "https://open.spotify.com/track/0e7ipj03S05BNilyu5bRzt", // Watermelon Sugar – Harry Styles
-              "https://open.spotify.com/track/5aAx2yezTd8zXrkmtKl66Z", // Sweater Weather – The Neighbourhood
-              "https://open.spotify.com/track/2takcwOaAZWiXQijPHIx7B", // Dreams – Fleetwood Mac
-              "https://open.spotify.com/track/0HEmnAUT8PHznIAAmVXqFJ", // Let Her Go – Passenger
-              "https://open.spotify.com/track/3Zwu2K0Qa5sT6teCCHPShP", // Counting Stars – OneRepublic
-              "https://open.spotify.com/track/6I9VzXrHxO9rA9A5euc8Ak", // Don't Stop Believin' – Journey
-              "https://open.spotify.com/track/0yLdNVWF3Srea0uzk55zFn", // Die For You – The Weeknd
-              "https://open.spotify.com/track/5ChkMS8OtdzJeqyybCc9R5", // Feel Good Inc. – Gorillaz
-              "https://open.spotify.com/track/0V3wPSX9ygBnCm8psDIegu", // Radioactive – Imagine Dragons
-              "https://open.spotify.com/track/1rqqCSm0Qe4I9rUvWncaom", // Levitating – Dua Lipa
-              "https://open.spotify.com/track/4iJyoBOLtHqaGxP12qzhQI", // Heat Waves – Glass Animals
-              "https://open.spotify.com/track/0ct6r3EGTcMLPtrXHDvVjc", // Super Freaky Girl – Nicki Minaj
-              "https://open.spotify.com/track/3dYD57lRAUcMHufyqn9GcI", // Young and Beautiful – Lana Del Rey
-              "https://open.spotify.com/track/6RRNNciQGZEXnqk8SQ9yv5", // Riptide – Vance Joy
-              "https://open.spotify.com/track/6K4t31amVTZDgR3sKmwUJJ", // Stay – The Kid LAROI, Justin Bieber
-              "https://open.spotify.com/track/0k1WUmIRnG3xU6fvvDVfRG", // Starboy – The Weeknd
-              "https://open.spotify.com/track/1Eolhana7nKHYpcYpdVcT5", // Dreams – The Cranberries
-              "https://open.spotify.com/track/2TpxZ7JUBn3uw46aR7qd6V", // Can't Hold Us – Macklemore & Ryan Lewis
-              "https://open.spotify.com/track/6I9CHStrpMtN9tZbTzDDt4", // TONGUE TIED – GROUPLOVE
-              "https://open.spotify.com/track/1zi7xx7UVEFkmKfv06H8x0", // Uptown Funk – Mark Ronson ft. Bruno Mars
-              "https://open.spotify.com/track/0lCHfZ2B5ZxD3z4ZzY5Hch", // Somebody That I Used To Know – Gotye
-              "https://open.spotify.com/track/1YULp0uB91FZ8IXE33r2UR", // Titanium – David Guetta ft. Sia
-              "https://open.spotify.com/track/2dLLR6qlu5UJ5gk0dKz0h3", // Valerie – Mark Ronson ft. Amy Winehouse
-              "https://open.spotify.com/track/3xKsf9qdS1CyvXSMEid6g8", // Counting Stars – OneRepublic
-              "https://open.spotify.com/track/3a1lNhkSLSkpJE4MSHpDu9", // Circles – Post Malone
-              "https://open.spotify.com/track/5HCyWlXZPP0y6Gqq8TgA20", // Industry Baby – Lil Nas X
-              "https://open.spotify.com/track/6GgPSx38vJziGp9niljReD", // Drivers License – Olivia Rodrigo
-              "https://open.spotify.com/track/0ZNU020wNYvgW84iljPkPP", // Somebody Else – The 1975
-              "https://open.spotify.com/track/0hVXuCcriWRGvwMV1r5Yn9", // Goosebumps – Travis Scott
-              "https://open.spotify.com/track/4Dvkj6JhhA12EX05fT7y2e", // Good 4 U – Olivia Rodrigo
-              "https://open.spotify.com/track/5QDLhrAOJJdNAmCTJ8xMyW", // Shivers – Ed Sheeran
-              "https://open.spotify.com/track/7lPN2DXiMsVn7XUKtOW1CS", // As It Was – Harry Styles
-              "https://open.spotify.com/track/6zSpb8dQRaw0M1dK8PBwQz", // Electric Love – BØRNS
-              "https://open.spotify.com/track/0nbXyq5TXYPCO7pr3N8S4I", // Sweater Weather – The Neighbourhood
-              "https://open.spotify.com/track/3UmaczJpikHgJFyBTAJVoz", // Budapest – George Ezra
-              "https://open.spotify.com/track/1Qrg8KqiBpW07V7PNxwwwL", // Anti-Hero – Taylor Swift
-              "https://open.spotify.com/track/6Kby0fF1vV7shS1FEO9Hyj", // Enemy – Imagine Dragons, JID
-              "https://open.spotify.com/track/2xLMifQCjDGFmkHkpNLD9h", // Save Your Tears – The Weeknd
-              "https://open.spotify.com/track/2YpeDb67231RjR0MgVLzsG", // Congratulations – Post Malone
-              "https://open.spotify.com/track/3KkXRkHbMCARz0aVfEt68P", // Happier – Marshmello ft. Bastille
-              "https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh", // Additional tracks to fill 48 slots
-              "https://open.spotify.com/track/6rqhFgbbKwnb9MLmU2h6N2",
-              "https://open.spotify.com/track/5QO79kh1waicV47BqGRL3g",
-              "https://open.spotify.com/track/0V3wPSX9ygBnCm8psCASes",
-              "https://open.spotify.com/track/1lDWb6b6ieDQ2xT7ewTC3G",
-              "https://open.spotify.com/track/2LBqCSwhJGcFQeTHMVGwy3",
-              "https://open.spotify.com/track/3CRDbSIZ4r5MsZ0YwxuEkn",
-              "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT",
-              "https://open.spotify.com/track/6M7WGP8nQtOM1NdBgO47XR",
-              "https://open.spotify.com/track/7lEptt4OwMhUQhCVVXqJdE",
-              "https://open.spotify.com/track/8KJgCLYcH0ygM2Qj8pGqX9",
-              "https://open.spotify.com/track/9LmNqXwJqR2TqX8K8JqR2T",
-              "https://open.spotify.com/track/0K8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/1L8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/2M8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/3N8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/4O8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/5P8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/6Q8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/7R8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/8S8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/9T8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/0U8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/1V8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/2W8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/3X8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/4Y8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/5Z8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/6A8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/7B8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/8C8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/9D8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/0E8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/1F8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/2G8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/3H8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/4I8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/5J8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/6K8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/7L8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/8M8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/9N8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/0O8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/1P8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/2Q8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/3R8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/4S8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/5T8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/6U8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/7V8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/8W8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/9X8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/0Y8JqR2TqX8K8JqR2TqX8K",
-              "https://open.spotify.com/track/1Z8JqR2TqX8K8JqR2TqX8K"
-            ].map((url, index) => {
-              const embedUrl = url.replace('open.spotify.com/track/', 'open.spotify.com/embed/track/');
-              return (
-                <motion.div
-                  key={index}
-                  className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 overflow-hidden opacity-40 hover:opacity-80 transition-all duration-300 blur-sm hover:blur-none"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 0.4, scale: 1 }}
-                  transition={{ 
-                    duration: 0.6, 
-                    delay: index * 0.05,
-                    ease: "easeOut"
-                  }}
-                >
-                  <iframe
-                    src={embedUrl}
-                    width="100%"
-                    height="120"
-                    frameBorder="0"
-                    allow="encrypted-media"
-                    title={`Spotify Track ${index + 1}`}
-                    className="w-full h-full"
-                  />
-                </motion.div>
-              );
-            })}
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 h-full">
+            {Array.from({ length: 24 }, (_, index) => (
+              <motion.div
+                key={index}
+                className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 overflow-hidden opacity-40 hover:opacity-80 transition-all duration-300 blur-sm hover:blur-none"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 0.4, scale: 1 }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: index * 0.05,
+                  ease: "easeOut"
+                }}
+              >
+                <div className="w-full h-[352px] bg-gradient-to-br from-white/10 to-white/5 rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-4xl mb-2">🎵</div>
+                    <div className="text-white/60 text-sm">Music</div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
 
@@ -454,7 +346,7 @@ export default function Landing() {
                 }
               ].map((artist, index) => {
                 const spotifyEmbedUrl = artist.snippetUrl ? 
-                  artist.snippetUrl.replace('open.spotify.com/track/', 'open.spotify.com/embed/track/') : null;
+                  artist.snippetUrl.replace('open.spotify.com/track/', 'open.spotify.com/embed/track/') + '?utm_source=generator' : null;
                 
                 return (
                   <motion.div
@@ -475,14 +367,17 @@ export default function Landing() {
                       {spotifyEmbedUrl && (
                         <div className="w-full overflow-hidden rounded-lg mb-4">
                           <iframe
+                            data-testid="embed-iframe"
+                            style={{ borderRadius: "12px", maxWidth: '100%', boxSizing: 'border-box' }}
                             src={spotifyEmbedUrl}
                             width="100%"
-                            height="120"
+                            height="352"
                             frameBorder="0"
-                            allow="encrypted-media"
+                            allowfullscreen=""
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                            loading="lazy"
                             title={`${artist.name} - Spotify Player`}
                             className="block w-full"
-                            style={{ maxWidth: '100%', boxSizing: 'border-box' }}
                           ></iframe>
                         </div>
                       )}

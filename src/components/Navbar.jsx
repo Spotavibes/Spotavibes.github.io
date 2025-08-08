@@ -73,13 +73,13 @@ export default function Navbar({ user }) {
 
   return (
     <>
-      <nav className="navbar-animated text-white p-4 shadow-md font-extrabold bg-gradient-to-r from-[#0a0a23] via-[#1a0033] to-[#2d0036]" style={{ fontFamily: 'Poppins, Montserrat, Arial, sans-serif' }}>
+      <nav className="text-white p-4 font-extrabold bg-[#0a0a23]" style={{ fontFamily: 'Poppins, Montserrat, Arial, sans-serif' }}>
         <div className="max-w-7xl mx-auto flex justify-between items-center relative">
           <div className="logo-gradient-glow text-2xl font-extrabold select-none cursor-default tracking-tight">Spotavibe</div>
 
           {/* Hamburger button */}
           <button
-            className="md:hidden block p-2 rounded bg-white/10 hover:bg-white/20 focus:outline-none shadow-md border border-white/20 transition-colors"
+            className="md:hidden block p-2 rounded bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-0 shadow-md border border-white/20 transition-colors"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
             aria-expanded={isOpen}
@@ -103,27 +103,27 @@ export default function Navbar({ user }) {
 
           {/* Navigation links */}
           <div
-            className={`flex-col md:flex-row md:flex md:items-center absolute md:static top-16 left-0 right-0 bg-gradient-to-br from-[#0a0a23] to-[#1a0033] md:bg-transparent transition-transform duration-300 ease-in-out z-10 ${
+            className={`flex-col md:flex-row md:flex md:items-center absolute md:static top-16 left-0 right-0 navbar-animated md:bg-transparent transition-transform duration-300 ease-in-out z-10 ${
               isOpen ? 'flex' : 'hidden'
             }`}
           >
             <Link
               to="/"
-              className="nav-link-underline block px-4 py-2 hover:text-blue-400 md:ml-6 transition-colors rounded-lg"
+              className="nav-link-underline block px-4 py-2 hover:text-blue-400 md:ml-6 transition-colors rounded-lg focus:outline-none focus:ring-0"
               onClick={() => setIsOpen(false)}
             >
               Home
             </Link>
             <Link
               to="/explore-artists"
-              className="nav-link-underline block px-4 py-2 hover:text-teal-300 md:ml-6 transition-colors rounded-lg"
+              className="nav-link-underline block px-4 py-2 hover:text-teal-300 md:ml-6 transition-colors rounded-lg focus:outline-none focus:ring-0"
               onClick={() => setIsOpen(false)}
             >
               Artists
             </Link>
             <Link
               to="/artist-submission"
-              className="nav-link-underline block px-4 py-2 hover:text-purple-300 md:ml-6 transition-colors rounded-lg"
+              className="nav-link-underline block px-4 py-2 hover:text-purple-300 md:ml-6 transition-colors rounded-lg focus:outline-none focus:ring-0"
               onClick={() => setIsOpen(false)}
             >
               Profile Submission
@@ -132,7 +132,7 @@ export default function Navbar({ user }) {
             <div className="relative md:ml-6 px-4 py-2">
               <button 
                 ref={dropdownButtonRef}
-                className="flex items-center space-x-2 nav-link-underline block px-4 py-2 hover:text-yellow-300 transition-colors rounded-lg focus:outline-none"
+                className="flex items-center space-x-2 nav-link-underline block px-4 py-2 hover:text-yellow-300 transition-colors rounded-lg focus:outline-none focus:ring-0"
                 onMouseEnter={handleDropdownMouseEnter}
                 onMouseLeave={handleDropdownMouseLeave}
                 onFocus={handleDropdownMouseEnter}
@@ -152,7 +152,7 @@ export default function Navbar({ user }) {
                 <span className="select-none font-semibold">👋 {user.email}</span>
                 <button
                   onClick={handleSignOut}
-                  className="nav-btn-gradient px-3 py-1 rounded transition-colors font-bold"
+                  className="nav-btn-gradient px-3 py-1 rounded transition-colors font-bold focus:outline-none focus:ring-0"
                 >
                   Sign Out
                 </button>
@@ -190,7 +190,7 @@ export default function Navbar({ user }) {
         >
           <Link 
             to="/investor-dashboard" 
-            className="block px-4 py-3 hover:bg-white/10 rounded-t-lg transition-colors" 
+            className="block px-4 py-3 hover:bg-white/10 rounded-t-lg transition-colors focus:outline-none focus:ring-0" 
             onClick={() => {
               setIsOpen(false)
               setIsDropdownOpen(false)
@@ -200,7 +200,7 @@ export default function Navbar({ user }) {
           </Link>
           <Link 
             to="/artist-dashboard" 
-            className="block px-4 py-3 hover:bg-white/10 rounded-b-lg transition-colors" 
+            className="block px-4 py-3 hover:bg-white/10 rounded-b-lg transition-colors focus:outline-none focus:ring-0" 
             onClick={() => {
               setIsOpen(false)
               setIsDropdownOpen(false)

@@ -155,11 +155,11 @@ export default function ArtistProfile() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-br from-purple-700 via-pink-600 to-red-500 text-gray-900 font-sans py-10"
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      transition={{ duration: 0.4 }}
+      className="min-h-screen bg-gradient-to-b from-purple-700 to-black text-gray-900 font-sans py-10"
+    initial={{ opacity: 0, x: 50 }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: -50 }}
+    transition={{ duration: 0.4 }}
     >
       <div className="max-w-4xl mx-auto bg-white bg-opacity-95 rounded-3xl p-10 shadow-2xl">
         <button
