@@ -13,7 +13,6 @@ export default function Checkout({ user }) {
 
   useEffect(() => {
     setMounted(true)
-    // Animate progress steps
     const timer = setTimeout(() => setProgressStep(2), 500)
     const timer2 = setTimeout(() => setProgressStep(3), 1000)
     return () => {
@@ -25,7 +24,6 @@ export default function Checkout({ user }) {
   if (!artist) {
     return (
       <section className="min-h-screen bg-[#0a0a23] font-sans relative overflow-hidden">
-        {/* Animated Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-32 h-32 bg-red-500/10 rounded-full blur-xl animate-pulse"></div>
           <div className="absolute bottom-40 right-20 w-24 h-24 bg-yellow-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
@@ -52,7 +50,11 @@ export default function Checkout({ user }) {
   const genres = Array.isArray(artist.genres) ? artist.genres : (artist.genres ? artist.genres.split(',') : []);
   const bio = artist.bio || 'No bio available.';
   const banner = artist.snippet_url || '';
-  const price = artist.price || '$10.00'; // fallback price if not present
+  const ml = Number(artist.monthly_listeners) || 0;
+  const inv = Number(artist.investors) || 0;
+
+  // Keep price as number internally
+  const price = 0.01 * ml * 3 * 0.04 / 24 * (1 + 0.01 * inv); 
   const id = artist.user_id || artist.id || '';
 
   // Socials fallback
@@ -72,7 +74,10 @@ export default function Checkout({ user }) {
       return;
     }
     const token = session.access_token;
-    const priceNum = Number(price.replace('$', ''));
+
+    // Send amount in cents to backend
+    const amountInDollars = price.toFixed(2);
+
     try {
       const res = await fetch('http://localhost:3000/create-checkout-session', {
         method: 'POST',
@@ -82,17 +87,20 @@ export default function Checkout({ user }) {
         },
         body: JSON.stringify({
           artistId: id,
-          amount: priceNum,
+          amount: amountInDollars,
         }),
       });
+
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
+        console.error("Checkout session creation failed:", data);
         alert('Failed to get Stripe Checkout URL.');
         setLoading(false)
       }
     } catch (error) {
+      console.error(error);
       alert('Error creating Stripe Checkout session.');
       setLoading(false)
     }
@@ -102,17 +110,12 @@ export default function Checkout({ user }) {
     <section className="min-h-screen bg-[#0a0a23] font-sans relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating Orbs */}
         <div className="absolute top-20 left-10 w-32 h-32 bg-green-500/10 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-blue-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         <div className="absolute bottom-40 left-1/4 w-40 h-40 bg-purple-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '4s' }}></div>
         <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-pink-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        
-        {/* Gradient Mesh */}
         <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-transparent to-blue-900/20"></div>
         <div className="absolute inset-0 bg-gradient-to-tl from-purple-900/10 via-transparent to-green-900/10"></div>
-        
-        {/* Animated Grid */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
             backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0)',
@@ -130,25 +133,15 @@ export default function Checkout({ user }) {
             <div className="text-6xl mb-4 animate-bounce" style={{ animationDuration: '3s', animationDelay: '0.5s' }}>🎵</div>
             <div className="text-8xl mb-4 animate-bounce" style={{ animationDuration: '3s', animationDelay: '1s' }}>💰</div>
           </div>
-          <h1
-            className={`text-6xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-white via-green-200 via-blue-200 to-purple-200 bg-clip-text text-transparent transition-all duration-1000 ${
-              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-          >
+          <h1 className={`text-6xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-white via-green-200 via-blue-200 to-purple-200 bg-clip-text text-transparent transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             Complete Investment
           </h1>
-          <p
-            className={`text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto transition-all duration-1000 delay-300 ${
-              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-          >
+          <p className={`text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             Review your investment details and confirm your purchase.
           </p>
           
           {/* Progress Steps */}
-          <div className={`flex justify-center gap-4 mt-8 transition-all duration-1000 delay-500 ${
-            mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}>
+          <div className={`flex justify-center gap-4 mt-8 transition-all duration-1000 delay-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <div className={`flex items-center ${progressStep >= 1 ? 'text-green-400' : 'text-gray-500'}`}>
               <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${progressStep >= 1 ? 'border-green-400 bg-green-400' : 'border-gray-500'}`}>
                 {progressStep >= 1 ? '✓' : '1'}
@@ -175,11 +168,8 @@ export default function Checkout({ user }) {
 
       {/* Checkout Content */}
       <div className="px-8 pb-16">
-        <div
-          className={`max-w-2xl mx-auto bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 transition-all duration-1000 delay-700 ${
-            mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
+        <div className={`max-w-2xl mx-auto bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 transition-all duration-1000 delay-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          
           {/* Artist Banner */}
           {banner && (
             <div className="mb-6 overflow-hidden rounded-xl relative group">
@@ -204,7 +194,9 @@ export default function Checkout({ user }) {
               <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-blue-500/10 animate-pulse"></div>
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-white mb-2">Investment Amount</h3>
-                <p className="text-4xl font-bold text-green-400 animate-pulse">{price}</p>
+                <p className="text-4xl font-bold text-green-400 animate-pulse">
+                  {`$${price.toFixed(2)}`}
+                </p>
                 <p className="text-sm text-gray-400 mt-2">Secure payment via Stripe</p>
               </div>
             </div>
