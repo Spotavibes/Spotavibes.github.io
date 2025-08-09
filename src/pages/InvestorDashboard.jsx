@@ -287,10 +287,8 @@ export default function InvestorDashboard({ user }) {
   }
 
   return (
-    <section className="min-h-screen bg-[#0a0a23] font-sans">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 to-blue-900/20"></div>
+<section className="min-h-screen bg-gradient-to-b from-[#1a002a] to-[#0a0010] font-sans relative overflow-hidden">      
+  <div className="relative overflow-hidden">
         <div className="relative z-10 px-8 py-16 text-center">
           <h1
             className={`text-6xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent transition-all duration-1000 ${

@@ -15,7 +15,7 @@ function ArtistProfileForm() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState(""); // "success" or "error"
   const [mounted, setMounted] = useState(false);
-const [monthlyListeners, setMonthlyListeners] = useState("");
+const [monthlyListeners, setMonthlyListeners] = useState(" ");
   useEffect(() => {
     setMounted(true);
   }, []);

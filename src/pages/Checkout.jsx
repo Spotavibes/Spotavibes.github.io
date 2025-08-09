@@ -24,9 +24,7 @@ export default function Checkout({ user }) {
 
   if (!artist) {
     return (
-      <section className="min-h-screen bg-[#0a0a23] font-sans relative overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+<section className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-900 to-black font-sans relative overflow-hidden">        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-32 h-32 bg-red-500/10 rounded-full blur-xl animate-pulse"></div>
           <div className="absolute bottom-40 right-20 w-24 h-24 bg-yellow-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
@@ -99,8 +97,7 @@ export default function Checkout({ user }) {
   }
 
   return (
-    <section className="min-h-screen bg-[#0a0a23] font-sans relative overflow-hidden">
-      {/* Animated Background Elements */}
+<section className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-900 to-black font-sans relative overflow-hidden">      {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating Orbs */}
         <div className="absolute top-20 left-10 w-32 h-32 bg-green-500/10 rounded-full blur-xl animate-pulse"></div>
@@ -123,7 +120,7 @@ export default function Checkout({ user }) {
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-green-900/30 via-blue-900/20 to-purple-900/30"></div>
+        
         <div className="relative z-10 px-8 py-16 text-center">
           <div className="mb-6">
             <div className="text-8xl mb-4 animate-bounce" style={{ animationDuration: '3s' }}>💳</div>

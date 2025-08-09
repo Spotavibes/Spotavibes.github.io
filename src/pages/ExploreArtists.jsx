@@ -124,10 +124,7 @@ export default function ExploreArtists() {
 
   return (
 
-  <section className="min-h-screen bg-gradient-to-b from-[#1a002a] to-black font-sans relative overflow-hidden">
-
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+<section className="min-h-screen bg-gradient-to-b from-[#1a002a] to-[#0a0010] font-sans relative overflow-hidden">  <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating Orbs */}
         <div className="absolute top-20 left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-blue-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
@@ -149,7 +146,6 @@ export default function ExploreArtists() {
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/30 via-blue-900/20 to-pink-900/30"></div>
         <div className="relative z-10 px-8 py-20 text-center">
           <div className="mb-6">
             <div className="text-8xl mb-4 animate-bounce" style={{ animationDuration: '3s' }}>🎵</div>
