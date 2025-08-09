@@ -146,12 +146,8 @@ export default function ExploreArtists() {
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-[26vh] max-h-[320px] bg-gradient-to-r from-purple-900/60 via-blue-900/30 to-pink-900/60 rounded-b-3xl pointer-events-none"></div>
         <div className="relative z-10 px-8 py-20 text-center">
-          <div className="mb-6">
-            <div className="text-8xl mb-4 animate-bounce" style={{ animationDuration: '3s' }}>🎵</div>
-            <div className="text-6xl mb-4 animate-bounce" style={{ animationDuration: '3s', animationDelay: '0.5s' }}>🎤</div>
-            <div className="text-8xl mb-4 animate-bounce" style={{ animationDuration: '3s', animationDelay: '1s' }}>🎸</div>
-          </div>
           <h1
             className={`text-6xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-white via-purple-200 via-pink-200 to-blue-200 bg-clip-text text-transparent transition-all duration-1000 ${
               mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -159,30 +155,11 @@ export default function ExploreArtists() {
           >
             Explore Artists
           </h1>
-          <p
-            className={`text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto transition-all duration-1000 delay-300 ${
-              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-          >
-            Discover emerging talent and invest in the future of music
-          </p>
-          
           {/* Animated Stats */}
           <div className={`flex justify-center gap-8 mt-8 transition-all duration-1000 delay-500 ${
             mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-400 animate-pulse">{artists.length}</div>
-              <div className="text-sm text-gray-400">Artists</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-400 animate-pulse" style={{ animationDelay: '0.5s' }}>{genreOptions.length}</div>
-              <div className="text-sm text-gray-400">Genres</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-pink-400 animate-pulse" style={{ animationDelay: '1s' }}>∞</div>
-              <div className="text-sm text-gray-400">Possibilities</div>
-            </div>
+            
           </div>
         </div>
       </div>
@@ -456,8 +433,14 @@ export default function ExploreArtists() {
                     }}
                     className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent relative z-10"
                   >
-                    Invest Now
+                    {(() => {
+                      const ml = Number(artist.monthly_listeners) || 0;
+                      const inv = Number(artist.investors) || 0;
+                      const price = 0.01 * ml * 3 * 0.04 / 24 * (1 + 0.01 * inv);
+                      return `${price.toFixed(2)} for 1%`;
+                    })()}
                   </button>
+
                 </div>
               );
             })}

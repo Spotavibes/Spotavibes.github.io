@@ -15,14 +15,17 @@ function ArtistProfileForm() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState(""); // "success" or "error"
   const [mounted, setMounted] = useState(false);
+
 const [monthlyListeners, setMonthlyListeners] = useState(" ");
+
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
   // Helper to count words
   const wordCount = description.trim().split(/\s+/).filter(Boolean).length;
-const isFormValid = artistName.trim() && description.trim() && genres.length > 0 && spotifyUrl.trim() && monthlyListeners.trim();
+  const isFormValid = artistName.trim() && description.trim() && genres.length > 0 && spotifyUrl.trim() && monthlyListeners.trim();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
