@@ -23,7 +23,7 @@ export default function Checkout({ user }) {
 
   if (!artist) {
     return (
-<section className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-900 to-black font-sans relative overflow-hidden">        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+<section className="min-h-screen bg-gradient-to-b from-[#1a002a] to-[#0a0010] font-sans relative overflow-hidden">  <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-32 h-32 bg-red-500/10 rounded-full blur-xl animate-pulse"></div>
           <div className="absolute bottom-40 right-20 w-24 h-24 bg-yellow-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
@@ -106,7 +106,7 @@ export default function Checkout({ user }) {
   }
 
   return (
-<section className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-900 to-black font-sans relative overflow-hidden">      {/* Animated Background Elements */}
+<section className="min-h-screen bg-gradient-to-b from-[#1a002a] to-[#0a0010] font-sans relative overflow-hidden">  {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-green-500/10 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-blue-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
@@ -127,9 +127,10 @@ export default function Checkout({ user }) {
         
         <div className="relative z-10 px-8 py-16 text-center">
           <div className="mb-6">
-            <div className="text-8xl mb-4 animate-bounce" style={{ animationDuration: '3s' }}>💳</div>
+            {/* Animated icons maybe use later ? */} 
+            {/*<div className="text-8xl mb-4 animate-bounce" style={{ animationDuration: '3s' }}>💳</div>
             <div className="text-6xl mb-4 animate-bounce" style={{ animationDuration: '3s', animationDelay: '0.5s' }}>🎵</div>
-            <div className="text-8xl mb-4 animate-bounce" style={{ animationDuration: '3s', animationDelay: '1s' }}>💰</div>
+            <div className="text-8xl mb-4 animate-bounce" style={{ animationDuration: '3s', animationDelay: '1s' }}>💰</div>*/}
           </div>
           <h1 className={`text-6xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-white via-green-200 via-blue-200 to-purple-200 bg-clip-text text-transparent transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             Complete Investment
@@ -146,14 +147,12 @@ export default function Checkout({ user }) {
               </div>
               <span className="ml-2 text-sm">Review</span>
             </div>
-            <div className={`w-16 h-0.5 ${progressStep >= 2 ? 'bg-green-400' : 'bg-gray-500'}`}></div>
             <div className={`flex items-center ${progressStep >= 2 ? 'text-green-400' : 'text-gray-500'}`}>
               <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${progressStep >= 2 ? 'border-green-400 bg-green-400' : 'border-gray-500'}`}>
                 {progressStep >= 2 ? '✓' : '2'}
               </div>
               <span className="ml-2 text-sm">Confirm</span>
             </div>
-            <div className={`w-16 h-0.5 ${progressStep >= 3 ? 'bg-green-400' : 'bg-gray-500'}`}></div>
             <div className={`flex items-center ${progressStep >= 3 ? 'text-green-400' : 'text-gray-500'}`}>
               <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${progressStep >= 3 ? 'border-green-400 bg-green-400' : 'border-gray-500'}`}>
                 {progressStep >= 3 ? '✓' : '3'}

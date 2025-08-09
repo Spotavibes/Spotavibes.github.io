@@ -14,6 +14,31 @@ const SPOTAVIBE_LETTERS = [
   { letter: 'E', color: 'spotavibe-letter' },
 ]
 
+const faqData = [
+  {
+    question: "How does music investing work?",
+    answer: "You invest in emerging artists by purchasing shares or tokens. As the artist earns revenue from streams, concerts, or sales, you receive a portion of the profits based on your investment."
+  },
+  {
+    question: "What are the legal requirements?",
+    answer: "You must be at least 18 years old and comply with local investment regulations. All artists and investors are verified to ensure a safe and legal platform."
+  },
+  {
+    question: "What fees are involved?",
+    answer: "Spotavibes charges a small transaction fee on each investment. There are no hidden fees, and all costs are transparently displayed before you invest."
+  },
+  {
+    question: "How do I track my investments?",
+    answer: "You can monitor your portfolio and returns in real-time through the Investor Dashboard, which provides detailed analytics and updates on your investments."
+  },
+  {
+    question: "Can I sell my investments?",
+    answer: "Yes, you can sell your shares or tokens to other investors on the platform’s marketplace, subject to demand and platform rules."
+  }
+];
+
+
+
 export default function Landing() {
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -22,6 +47,7 @@ export default function Landing() {
   })
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
+const [openFaq, setOpenFaq] = useState(null);
 
   return (
     <div ref={containerRef} className="relative">
@@ -29,31 +55,58 @@ export default function Landing() {
       <section className="min-h-screen bg-gradient-to-br from-[#0a0a23] via-[#1a0033] to-[#2d0036] relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         
-        {/* Grid of Music Placeholders */}
-        <div className="absolute inset-0 p-8">
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 h-full">
-            {Array.from({ length: 24 }, (_, index) => (
-              <motion.div
-                key={index}
-                className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 overflow-hidden opacity-40 hover:opacity-80 transition-all duration-300 blur-sm hover:blur-none"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 0.4, scale: 1 }}
-                transition={{ 
-                  duration: 0.6, 
-                  delay: index * 0.05,
-                  ease: "easeOut"
-                }}
-              >
-                <div className="w-full h-[352px] bg-gradient-to-br from-white/10 to-white/5 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-4xl mb-2">🎵</div>
-                    <div className="text-white/60 text-sm">Music</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+        {/* Collage of Spotify artist images */}
+<div className="absolute inset-0 p-8 z-0">
+  <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-0 h-full">
+    {[
+      "https://i.scdn.co/image/ab67616d00001e02712701c5e263efc8726b1464",
+      "https://i.scdn.co/image/ab67616d00001e029164bafe9aaa168d93f4816a",
+      "https://i.scdn.co/image/ab67616d00001e020b08855f940277500e090ae5",
+      "https://i.scdn.co/image/ab67616d00001e02483d9d5511f724aeb7409ee0",
+      "https://i.scdn.co/image/ab67616d00001e02834f16100678d3e800fb5fb9",
+      "https://i.scdn.co/image/ab67616d00001e02346d77e155d854735410ed18",
+      "https://i.scdn.co/image/ab67616d00001e02897f73256b9128a9d70eaf66",
+      "https://i.scdn.co/image/ab67616d00001e02bd69bbde4aeee723d6d08058",
+      "https://i.scdn.co/image/ab67616d00001e02f9f2d43ff44bdfbe8c556f8d",
+      "https://i.scdn.co/image/ab67616d00001e02f907de96b9a4fbc04accc0d5",
+      "https://i.scdn.co/image/ab67616d00001e02c027ad28821777b00dcaa888",
+      "https://i.scdn.co/image/ab67616d00001e028940ac99f49e44f59e6f7fb3",
+      "https://i.scdn.co/image/ab67616d00001e028863bc11d2aa12b54f5aeb36",
+      "https://i.scdn.co/image/ab67616d00001e02edf5b257be1d6593e81bb45f",
+      "https://i.scdn.co/image/ab67616d00001e0277fdcfda6535601aff081b6a",
+      "https://i.scdn.co/image/ab67616d00001e020c471c36970b9406233842a5",
+      "https://i.scdn.co/image/ab67616d00001e02f54b99bf27cda88f4a7403ce",
+      "https://i.scdn.co/image/ab67616d00001e020af4476af141051c728ee8b9",
+      "https://i.scdn.co/image/ab67616d00001e0242b669f253bbc8ae9c49041e",
+      "https://i.scdn.co/image/ab67616d00001e02d57e3b601a8171f7e122b2ea",
+      "https://i.scdn.co/image/ab67616d00001e02fddfffec51b4580acae727c1",
+      "https://i.scdn.co/image/ab67616d00001e022abb30c6296964d5d07458c2",
+      "https://i.scdn.co/image/ab67616d00001e02f6b55ca93bd33211227b502b",
+      "https://i.scdn.co/image/ab67616d00001e02eb2a87031edeb0be809c48aa",
+
+
+
+    ].map((url, index) => (
+      <motion.div
+        key={index}
+        className="rounded-lg overflow-hidden opacity-40 hover:opacity-80 transition-all duration-300 blur-sm hover:blur-none"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 0.4, scale: 1 }}
+        transition={{ 
+          duration: 0.6, 
+          delay: index * 0.05,
+          ease: "easeOut"
+        }}
+      >
+        <img
+          src={url}
+          alt={`Artist ${index + 1}`}
+          className="w-full h-[352px] object-cover"
+        />
+      </motion.div>
+    ))}
+  </div>
+</div>
 
         {/* SPOTAVIBES Logo Overlay - no shadow overlay */}
         <div className="absolute inset-0 flex items-center justify-center z-20">
@@ -313,10 +366,10 @@ export default function Landing() {
               {[
                 {
                   id: 1,
-                  name: "Luna Nova",
-                  genre: "Alternative Pop",
-                  spotifyUrl: "https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh",
-                  snippetUrl: "https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh",
+                  name: "XXXTentacion",
+                  genre: "Alternative Rock",
+                  spotifyUrl: "https://open.spotify.com/track/5TXDeTFVRVY7Cvt0Dw4vWW",
+                  snippetUrl: "https://open.spotify.com/track/5TXDeTFVRVY7Cvt0Dw4vWW",
                   plays: "2.4k",
                   invested: "$15.2k",
                   investors: "234",
@@ -324,10 +377,10 @@ export default function Landing() {
                 },
                 {
                   id: 2,
-                  name: "Echo Valley",
-                  genre: "Indie Rock",
-                  spotifyUrl: "https://open.spotify.com/track/6rqhFgbbKwnb9MLmU2h6N2",
-                  snippetUrl: "https://open.spotify.com/track/6rqhFgbbKwnb9MLmU2h6N2",
+                  name: "Drake",
+                  genre: "Alternative Pop",
+                  spotifyUrl: "https://open.spotify.com/track/5mCPDVBb16L4XQwDdbRUpz",
+                  snippetUrl: "https://open.spotify.com/track/5mCPDVBb16L4XQwDdbRUpz",
                   plays: "1.8k",
                   invested: "$12.7k",
                   investors: "189",
@@ -335,10 +388,10 @@ export default function Landing() {
                 },
                 {
                   id: 3,
-                  name: "Neon Dreams",
-                  genre: "Electronic",
-                  spotifyUrl: "https://open.spotify.com/track/5QO79kh1waicV47BqGRL3g",
-                  snippetUrl: "https://open.spotify.com/track/5QO79kh1waicV47BqGRL3g",
+                  name: "d4vd",
+                  genre: "funk",
+                  spotifyUrl: "https://open.spotify.com/track/3SAga35lAPYdjj3qyfEsCF",
+                  snippetUrl: "https://open.spotify.com/track/3SAga35lAPYdjj3qyfEsCF",
                   plays: "3.1k",
                   invested: "$18.9k",
                   investors: "312",
@@ -593,50 +646,78 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="min-h-screen bg-gradient-to-br from-[#0a0a23] via-[#1a0033] to-[#2d0036] py-24">
-        <div className="absolute inset-0 bg-black/5"></div>
-        <div className="container mx-auto px-6 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
-            <h2 className="text-5xl md:text-6xl font-bold purple-gradient-text mb-6">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-xl text-white/80 max-w-3xl mx-auto">
-              Everything you need to know about music investing
-            </p>
-          </motion.div>
-          
-          <div className="max-w-4xl mx-auto space-y-4">
-            {[
-              "How does music investing work?",
-              "What are the legal requirements?",
-              "What fees are involved?",
-              "How do I track my investments?",
-              "Can I sell my investments?"
-            ].map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="group bg-white/5 p-6 rounded-2xl border border-white/10 cursor-pointer hover:bg-white/10 transition-all duration-300"
-              >
-                <div className="flex items-center justify-between">
-                  <p className="text-white font-medium text-lg">{faq}</p>
-                  <span className="text-white text-2xl group-hover:rotate-45 transition-transform duration-300">+</span>
-                </div>
-              </motion.div>
-            ))}
+     {/* FAQ Section */}
+      <section className="min-h-screen bg-gradient-to-br from-[#0a0a23] via-[#1a0033] to-[#2d0036] flex items-center justify-center">
+
+    {/* Floating Orbs */}
+    <div className="absolute top-10 left-20 w-32 h-32 bg-purple-900/30 rounded-full blur-2xl animate-pulse"></div>
+    <div className="absolute top-40 right-32 w-24 h-24 bg-blue-900/30 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+    <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-pink-900/30 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+    <div className="absolute bottom-10 right-1/3 w-28 h-28 bg-green-900/30 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+    {/* Gradient mesh */}
+    <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-blue-900/20"></div>
+    <div className="absolute inset-0 bg-gradient-to-tl from-pink-900/20 via-transparent to-purple-900/20"></div>
+    {/* Animated grid */}
+    <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0" style={{
+        backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0)',
+        backgroundSize: '50px 50px'
+      }}></div>
+    
+  </div>
+  <div className="container mx-auto px-6 relative z-10">
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+      className="text-center mb-20"
+    >
+      <h2 className="text-5xl md:text-6xl font-bold purple-gradient-text mb-6">
+         Frequently Asked Questions
+      </h2>
+<p className="text-xl text-white/80 max-w-3xl mx-auto">        Everything you need to know about music investing
+      </p>
+    </motion.div>
+    
+    <div className="max-w-4xl mx-auto space-y-6">
+      {faqData.map((faq, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: index * 0.1 }}
+          viewport={{ once: true }}
+          className={`group bg-gradient-to-r from-[#1a002a] via-[#1a0033] to-[#0a0010] p-8 rounded-3xl border border-white/10 cursor-pointer hover:scale-105 hover:shadow-2xl transition-all duration-300 relative overflow-hidden`}
+          onClick={() => setOpenFaq(openFaq === index ? null : index)}
+        >
+          {/* Animated icon - moved to the right side */}
+          <span className={`absolute top-8 right-8 text-4xl transition-transform duration-500 ${openFaq === index ? 'scale-125 rotate-12' : 'scale-100 rotate-0'}`}>
+            {["🎵","💡","💰","📊","🔄"][index]}
+          </span>
+          <div className="flex items-center justify-between">
+            <p className="text-white font-extrabold text-2xl flex-1 tracking-wide">{faq.question}</p>
+            <span className={`ml-4 text-white text-3xl font-bold transition-transform duration-300 ${openFaq === index ? 'rotate-45' : ''}`}>+</span>
           </div>
-        </div>
-      </section>
+          <motion.div
+            initial={false}
+            animate={openFaq === index ? { height: "auto", opacity: 1, marginTop: 24 } : { height: 0, opacity: 0, marginTop: 0 }}
+            transition={{ duration: 0.4 }}
+            className="overflow-hidden"
+          >
+            {openFaq === index && (
+              <div className="text-lg md:text-xl text-gray-200 leading-relaxed px-2 pb-2 font-medium" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                {faq.answer}
+              </div>
+            )}
+          </motion.div>
+          {/* Decorative bottom bar */}
+          <div className={`absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-700 via-pink-700 to-blue-700 opacity-40 rounded-b-3xl`}></div>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* Final CTA Section */}
       <section className="min-h-screen bg-gradient-to-br from-[#0a0a23] via-[#1a0033] to-[#2d0036] flex items-center justify-center">
