@@ -460,8 +460,14 @@ export default function ExploreArtists() {
                     }}
                     className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent relative z-10"
                   >
-                    Invest Now
+                    {(() => {
+                      const ml = Number(artist.monthly_listeners) || 0;
+                      const inv = Number(artist.investors) || 0;
+                      const price = 0.01 * ml * 3 * 0.04 / 24 * (1 + 0.01 * inv);
+                      return `${price.toFixed(2)} for 1%`;
+                    })()}
                   </button>
+
                 </div>
               );
             })}
