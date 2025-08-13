@@ -53,7 +53,9 @@ export default function Checkout({ user }) {
   const inv = Number(artist.investors) || 0;
 
   // Keep price as number internally
-  const price = 0.01 * ml * 3 * 0.04 / 24 * (1 + 0.01 * inv); 
+  const passedPrice = location.state?.price;
+const price = passedPrice ?? (0.01 * ml * 3 * 0.04 / 24 * (1 + 0.01 * inv));
+
   const id = artist.user_id || artist.id || '';
 
   // Socials fallback

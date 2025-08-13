@@ -55,7 +55,7 @@ const [openFaq, setOpenFaq] = useState(null);
       <section className="min-h-screen bg-gradient-to-br from-[#0a0a23] via-[#1a0033] to-[#2d0036] relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         
-        {/* Collage of Spotify artist images */}
+        {/* Collage of Spotify artist images, need to add one by one by doing inspect element and find srcset link */}
 <div className="absolute inset-0 p-8 z-0">
   <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-0 h-full">
     {[

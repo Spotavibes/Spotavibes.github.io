@@ -23,6 +23,49 @@ export default function ArtistDashboard({ user }) {
   const [artistInfo, setArtistInfo] = useState(null)
   const [mounted, setMounted] = useState(false)
 
+  //code for revenue percentage limit
+const [maxRevenueShare, setMaxRevenueShare] = useState(artistInfo?.max_revenue_share || 0);
+const [savingRevenueShare, setSavingRevenueShare] = useState(false);
+
+async function saveRevenueShareLimit() {
+  setSavingRevenueShare(true);
+  const { error } = await supabase
+    .from('artists')
+    .update({ max_revenue_share: maxRevenueShare })
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error updating revenue share limit:', error);
+    alert('Failed to update limit.');
+  } else {
+    alert(`Revenue share limit updated to ${maxRevenueShare}%`);
+  }
+  setSavingRevenueShare(false);
+}
+
+// State
+const [investmentPrice, setInvestmentPrice] = useState(artistInfo?.custom_investment_price || 0.01);
+const [savingPrice, setSavingPrice] = useState(false);
+
+// Assume you already have a function or variable that calculates this:
+const maxPrice = artistInfo?.formula_valuation || 1.00; // Replace with your formula
+
+async function saveInvestmentPrice() {
+  setSavingPrice(true);
+  const { error } = await supabase
+    .from('artists')
+    .update({ custom_investment_price: investmentPrice })
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error updating investment price:', error);
+    alert('Failed to update price.');
+  } else {
+    alert(`Investment price updated to $${investmentPrice}`);
+  }
+  setSavingPrice(false);
+}
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -192,6 +235,52 @@ export default function ArtistDashboard({ user }) {
                   ))}
                 </select>
               </div>
+  <div className="mt-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
+  <label className="block text-white font-semibold mb-2">
+    Max % of Revenue Willing to Sell: <span className="text-purple-400">{maxRevenueShare}%</span>
+  </label>
+  <input
+    type="range"
+    min="0"
+    max="100"
+    step="0.1"
+    value={maxRevenueShare}
+    onChange={(e) => setMaxRevenueShare(Number(e.target.value))}
+    className="w-full accent-purple-500"
+  />
+  <button
+    onClick={saveRevenueShareLimit}
+    disabled={savingRevenueShare}
+    className="mt-3 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-semibold"
+  >
+    {savingRevenueShare ? 'Saving...' : 'Save Limit'}
+  </button>
+</div>
+
+<div className="mt-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
+  <label className="block text-white font-semibold mb-2">
+    Investment Price: <span className="text-purple-400">${investmentPrice.toFixed(2)}</span>
+  </label>
+  <input
+    type="range"
+    min="0.01"
+    max={maxPrice}
+    step="0.01"
+    value={investmentPrice}
+    onChange={(e) => setInvestmentPrice(Number(e.target.value))}
+    className="w-full accent-purple-500"
+  />
+  <button
+    onClick={saveInvestmentPrice}
+    disabled={savingPrice}
+    className="mt-3 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-semibold"
+  >
+    {savingPrice ? 'Saving...' : 'Save Price'}
+  </button>
+  <p className="text-xs text-gray-300 mt-1">
+    You can set your investment price anywhere between $0.01 and your formula valuation (${maxPrice.toFixed(2)}).
+  </p>
+</div>
 
               {/* Investment Summary */}
               {realTransactions.length > 0 && (
