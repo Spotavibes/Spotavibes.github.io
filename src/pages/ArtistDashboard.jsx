@@ -24,7 +24,7 @@ export default function ArtistDashboard({ user }) {
   const [mounted, setMounted] = useState(false)
 
   //code for revenue percentage limit
-const [maxRevenueShare, setMaxRevenueShare] = useState(artistInfo?.max_revenue_share || 0);
+const [maxRevenueShare, setMaxRevenueShare] = useState(0);
 const [savingRevenueShare, setSavingRevenueShare] = useState(false);
 
 async function saveRevenueShareLimit() {
@@ -44,7 +44,7 @@ async function saveRevenueShareLimit() {
 }
 
 // State
-const [investmentPrice, setInvestmentPrice] = useState(artistInfo?.custom_investment_price || 0.01);
+const [investmentPrice, setInvestmentPrice] = useState(0.01);
 const [savingPrice, setSavingPrice] = useState(false);
 
 // Assume you already have a function or variable that calculates this:
@@ -89,6 +89,9 @@ async function saveInvestmentPrice() {
           setArtistInfo(null)
         } else {
           setArtistInfo(artistData)
+          // Update state values when artist info is loaded
+          setMaxRevenueShare(artistData.max_revenue_share || 0)
+          setInvestmentPrice(artistData.custom_investment_price || 0.01)
         }
 
         // Then, get all transactions where this artist was invested in
@@ -211,6 +214,105 @@ async function saveInvestmentPrice() {
                 <p className="text-gray-300">{artistInfo.description}</p>
               </div>
 
+              {/* Revenue & Investment Settings Section */}
+              <div className="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                 {/* Current Revenue Sharing */}
+                 <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 backdrop-blur-md border border-purple-500/30 rounded-xl p-6">
+                   <div className="flex items-center justify-between mb-4">
+                     <h3 className="text-xl font-bold text-white">Revenue Sharing</h3>
+                     <div className="bg-purple-600/50 px-3 py-1 rounded-full">
+                       <span className="text-white font-semibold">{artistInfo?.max_revenue_share || 0}%</span>
+                     </div>
+                   </div>
+                   <p className="text-gray-300 mb-4">Maximum percentage of revenue you're willing to share with investors</p>
+                   <div className="space-y-3">
+                     <div className="flex items-center justify-between">
+                       <span className="text-gray-300 text-sm">Current Limit:</span>
+                       <span className="text-purple-400 font-semibold">{artistInfo?.max_revenue_share || 0}%</span>
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <input
+                         type="number"
+                         min="0"
+                         max="100"
+                         step="0.1"
+                         value={maxRevenueShare}
+                         onChange={(e) => setMaxRevenueShare(Number(e.target.value))}
+                         className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                         placeholder="Enter percentage"
+                       />
+                       <span className="text-gray-300">%</span>
+                     </div>
+                     <input
+                       type="range"
+                       min="0"
+                       max="100"
+                       step="0.1"
+                       value={maxRevenueShare}
+                       onChange={(e) => setMaxRevenueShare(Number(e.target.value))}
+                       className="w-full accent-purple-500"
+                     />
+                     <button
+                       onClick={saveRevenueShareLimit}
+                       disabled={savingRevenueShare}
+                       className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+                     >
+                       {savingRevenueShare ? 'Saving...' : 'Update Revenue Limit'}
+                     </button>
+                   </div>
+                 </div>
+
+                                 {/* Current Investment Price */}
+                 <div className="bg-gradient-to-br from-green-600/20 to-emerald-600/20 backdrop-blur-md border border-green-500/30 rounded-xl p-6">
+                   <div className="flex items-center justify-between mb-4">
+                     <h3 className="text-xl font-bold text-white">Investment Price</h3>
+                     <div className="bg-green-600/50 px-3 py-1 rounded-full">
+                       <span className="text-white font-semibold">${(artistInfo?.custom_investment_price || 0.01).toFixed(2)}</span>
+                     </div>
+                   </div>
+                   <p className="text-gray-300 mb-4">Price per share that investors pay to invest in your music</p>
+                   <div className="space-y-3">
+                     <div className="flex items-center justify-between">
+                       <span className="text-gray-300 text-sm">Current Price:</span>
+                       <span className="text-green-400 font-semibold">${(artistInfo?.custom_investment_price || 0.01).toFixed(2)}</span>
+                     </div>
+                     <div className="flex items-center justify-between">
+                       <span className="text-gray-300 text-sm">Max Price:</span>
+                       <span className="text-gray-400 text-sm">${maxPrice.toFixed(2)}</span>
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <span className="text-gray-300">$</span>
+                       <input
+                         type="number"
+                         min="0.01"
+                         max={maxPrice}
+                         step="0.01"
+                         value={investmentPrice}
+                         onChange={(e) => setInvestmentPrice(Number(e.target.value))}
+                         className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                         placeholder="Enter price"
+                       />
+                     </div>
+                     <input
+                       type="range"
+                       min="0.01"
+                       max={maxPrice}
+                       step="0.01"
+                       value={investmentPrice}
+                       onChange={(e) => setInvestmentPrice(Number(e.target.value))}
+                       className="w-full accent-green-500"
+                     />
+                     <button
+                       onClick={saveInvestmentPrice}
+                       disabled={savingPrice}
+                       className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+                     >
+                       {savingPrice ? 'Saving...' : 'Update Investment Price'}
+                     </button>
+                   </div>
+                 </div>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <input
                   type="text"
@@ -235,52 +337,7 @@ async function saveInvestmentPrice() {
                   ))}
                 </select>
               </div>
-  <div className="mt-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
-  <label className="block text-white font-semibold mb-2">
-    Max % of Revenue Willing to Sell: <span className="text-purple-400">{maxRevenueShare}%</span>
-  </label>
-  <input
-    type="range"
-    min="0"
-    max="100"
-    step="0.1"
-    value={maxRevenueShare}
-    onChange={(e) => setMaxRevenueShare(Number(e.target.value))}
-    className="w-full accent-purple-500"
-  />
-  <button
-    onClick={saveRevenueShareLimit}
-    disabled={savingRevenueShare}
-    className="mt-3 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-semibold"
-  >
-    {savingRevenueShare ? 'Saving...' : 'Save Limit'}
-  </button>
-</div>
 
-<div className="mt-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
-  <label className="block text-white font-semibold mb-2">
-    Investment Price: <span className="text-purple-400">${investmentPrice.toFixed(2)}</span>
-  </label>
-  <input
-    type="range"
-    min="0.01"
-    max={maxPrice}
-    step="0.01"
-    value={investmentPrice}
-    onChange={(e) => setInvestmentPrice(Number(e.target.value))}
-    className="w-full accent-purple-500"
-  />
-  <button
-    onClick={saveInvestmentPrice}
-    disabled={savingPrice}
-    className="mt-3 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-semibold"
-  >
-    {savingPrice ? 'Saving...' : 'Save Price'}
-  </button>
-  <p className="text-xs text-gray-300 mt-1">
-    You can set your investment price anywhere between $0.01 and your formula valuation (${maxPrice.toFixed(2)}).
-  </p>
-</div>
 
               {/* Investment Summary */}
               {realTransactions.length > 0 && (
