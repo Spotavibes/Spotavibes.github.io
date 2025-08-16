@@ -210,8 +210,25 @@ async function saveInvestmentPrice() {
           ) : (
             <>
               <div className="mb-6 p-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl">
-                <h2 className="text-2xl font-bold text-white mb-2">{artistInfo.artist_name}</h2>
-                <p className="text-gray-300">{artistInfo.description}</p>
+                <div className="flex flex-col lg:flex-row gap-6">
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-white mb-2">{artistInfo.artist_name}</h2>
+                    <p className="text-gray-300">{artistInfo.description}</p>
+                  </div>
+                  {artistInfo.snippet_url && (
+                    <div className="lg:w-[600px] flex-shrink-0">
+                      <iframe
+                        src={artistInfo.snippet_url.replace('open.spotify.com/track/', 'open.spotify.com/embed/track/') + '?utm_source=generator'}
+                        width="100%"
+                        height="152"
+                        frameBorder="0"
+                        allow="encrypted-media"
+                        title="Spotify Player"
+                        className="rounded-lg"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Revenue & Investment Settings Section */}
@@ -229,6 +246,10 @@ async function saveInvestmentPrice() {
                      <div className="flex items-center justify-between">
                        <span className="text-gray-300 text-sm">Current Limit:</span>
                        <span className="text-purple-400 font-semibold">{artistInfo?.max_revenue_share || 0}%</span>
+                     </div>
+                     <div className="flex items-center justify-between">
+                       <span className="text-gray-300 text-sm">Max Limit:</span>
+                       <span className="text-gray-400 text-sm">100%</span>
                      </div>
                      <div className="flex items-center gap-2">
                        <input
