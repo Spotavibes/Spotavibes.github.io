@@ -48,7 +48,7 @@ const [investmentPrice, setInvestmentPrice] = useState(0.01);
 const [savingPrice, setSavingPrice] = useState(false);
 
 // Assume you already have a function or variable that calculates this:
-const maxPrice = artistInfo?.formula_valuation || 1.00; // Replace with your formula
+const maxPrice = artistInfo?.TBD_FORMULA_VALUATION || 1.00; // Replace with your formula
 
 async function saveInvestmentPrice() {
   setSavingPrice(true);

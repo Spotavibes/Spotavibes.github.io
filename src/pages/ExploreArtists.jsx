@@ -17,8 +17,8 @@ export default function ExploreArtists() {
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
 
-  // Store custom prices per artist
-  const [customPrices, setCustomPrices] = useState({});
+  // Store custom percentages per artist (0% to max_revenue_share%)
+  const [customPercentages, setCustomPercentages] = useState({});
 
   useEffect(() => {
     setMounted(true);
@@ -28,15 +28,12 @@ export default function ExploreArtists() {
       if (!error && data) {
         setArtists(data);
 
-        // Initialize customPrices with formula's max price
-        const initialPrices = {};
+        // Initialize customPercentages with 1% as default
+        const initialPercentages = {};
         data.forEach(artist => {
-          const ml = Number(artist.monthly_listeners) || 0;
-          const inv = Number(artist.investors) || 0;
-          const maxPrice = 0.01 * ml * 3 * 0.04 / 24 * (1 + 0.01 * inv);
-          initialPrices[artist.user_id] = maxPrice;
+          initialPercentages[artist.user_id] = 1; // Default to 1%
         });
-        setCustomPrices(initialPrices);
+        setCustomPercentages(initialPercentages);
       }
       setLoading(false);
     }
@@ -383,10 +380,11 @@ export default function ExploreArtists() {
               const spotifyEmbedUrl = getSpotifyEmbedUrl(artist.snippet_url);
               const ml = Number(artist.monthly_listeners) || 0;
               const inv = Number(artist.investors) || 0;
-              const maxPrice = 0.01 * ml * 3 * 0.04 / 24 * (1 + 0.01 * inv);
+              const maxRevenueShare = Number(artist.max_revenue_share) || 100; // Default to 100% if not set
+              const pricePerPercent = 0.01 * ml * 3 * 0.04 / 24 * (1 + 0.01 * inv); // Price for 1% of shares
 
-              const currentPrice = customPrices[artist.user_id] ?? maxPrice;
-              const percentage = (currentPrice / maxPrice) * 1;
+              const currentPercentage = customPercentages[artist.user_id] ?? 1;
+              const currentPrice = (pricePerPercent * currentPercentage);
 
               return (
                 <div
@@ -436,19 +434,19 @@ export default function ExploreArtists() {
                     </div>
                   </div>
 
-                  {/* Price Slider */}
+                  {/* Revenue Share Slider */}
                   <div className="mb-4 relative z-10">
                     <label className="block text-white text-sm font-semibold mb-1">
-                      Set Your Price: ${currentPrice.toFixed(2)}
+                      Select Revenue Share: {currentPercentage.toFixed(1)}%
                     </label>
                     <input
                       type="range"
-                      min={0.01}
-                      max={maxPrice}
-                      step={0.01}
-                      value={currentPrice}
+                      min={0.1}
+                      max={maxRevenueShare}
+                      step={0.1}
+                      value={currentPercentage}
                       onChange={(e) =>
-                        setCustomPrices(prev => ({
+                        setCustomPercentages(prev => ({
                           ...prev,
                           [artist.user_id]: Number(e.target.value)
                         }))
@@ -456,15 +454,15 @@ export default function ExploreArtists() {
                       className="w-full"
                     />
                     <p className="text-gray-300 text-xs mt-1">
-                      {percentage.toFixed(2)}% ownership for this price
+                      Price: ${currentPrice.toFixed(2)} for {currentPercentage.toFixed(1)}% ownership
                     </p>
                   </div>
 
                   <button
-                    onClick={() => navigate('/checkout', { state: { artist, price: currentPrice } })}
+                    onClick={() => navigate('/checkout', { state: { artist, price: currentPrice, percentage: currentPercentage } })}
                     className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent relative z-10"
                   >
-                    Invest ${currentPrice.toFixed(2)}
+                    Invest ${currentPrice.toFixed(2)} for {currentPercentage.toFixed(1)}%
                   </button>
                 </div>
               );
