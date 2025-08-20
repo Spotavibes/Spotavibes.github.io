@@ -172,11 +172,15 @@ const price = passedPrice ?? (0.01 * ml * 3 * 0.04 / 24 * (1 + 0.01 * inv));
           {/* Artist Banner */}
           {banner && (
             <div className="mb-6 overflow-hidden rounded-xl relative group">
-              <img 
-                src={banner} 
-                alt={`${name} banner`} 
-                className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" 
-              />
+                  <iframe
+                    src={artist.snippet_url.replace('open.spotify.com/track/', 'open.spotify.com/embed/track/') + '?utm_source=generator'}
+                    width="100%"
+                    height="152"
+                    frameBorder="0"
+                    allow="encrypted-media"
+                    title="Spotify Player"
+                    className="rounded-lg"
+                  />
               <div className="absolute inset-0 bg-gradient-to-t from-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           )}
